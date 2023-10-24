@@ -3,7 +3,7 @@ package edu.uab.groupassignment;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class DroneAppController {
     @FXML
     private Label welcomeText;
 
