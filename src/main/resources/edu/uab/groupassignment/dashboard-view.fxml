@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<HBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.uab.groupassignment.DroneAppController">
+<HBox xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.uab.groupassignment.DashboardController">
     <children>
         <VBox alignment="CENTER" maxWidth="-Infinity" prefHeight="720.0" prefWidth="636.0" spacing="20.0">
             <padding>
