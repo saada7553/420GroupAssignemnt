@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class FarmItem extends Group {
     public double price;
     public boolean isContainer;
-    public String name;
+    private String name;
     private ArrayList<FarmItem> containedItems;
     private Rectangle mainRect;
     private Text itemLabel;
@@ -67,4 +67,10 @@ public class FarmItem extends Group {
     public Double  getY() { return mainRect.getY(); }
     public Double getWidth() { return mainRect.getWidth(); }
     public Double getHeight() { return mainRect.getHeight(); }
+
+    public String getName() {return name;}
+    public void setName(String newName) {
+        name = newName;
+        itemLabel.setText(name);
+    }
 }

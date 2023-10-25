@@ -51,7 +51,7 @@ public class DashboardSingleton {
     private TextField heightTextField;
     private final Button saveConfigBtn = new Button("Save");
     private final Button deleteConfigBtn = new Button("Delete");
-    private final CheckBox addAsChildCheckBox = new CheckBox("Add Component as New Item");
+    private final CheckBox addAsChildCheckBox = new CheckBox("Save Component as New Child");
     private final Button visitSelectedWithDroneBtn = new Button("Visited Selected With Drone");
     private final CheckBox isContainer = new CheckBox("Is Container");
 
@@ -63,7 +63,7 @@ public class DashboardSingleton {
         updateItems();
         expandTreeView(treeRoot);
 
-        // Create a custom cell factory to display only the name property
+        // Create a custom cell factory to display only the name in the tree
         itemsTree.setCellFactory(new Callback<>() {
             @Override
             public TreeCell<FarmItem> call(TreeView<FarmItem> param) {
@@ -74,7 +74,7 @@ public class DashboardSingleton {
                         if (item == null || empty) {
                             setText("");
                         } else {
-                            setText(item.name);
+                            setText(item.getName());
                         }
                     }
                 };
@@ -86,7 +86,7 @@ public class DashboardSingleton {
             if (selTreeItem != null) {
                 currentSelectedItem = selTreeItem.getValue();
                 addAsChildCheckBox.setDisable(!currentSelectedItem.isContainer);
-                nameTextField.setText(currentSelectedItem.name);
+                nameTextField.setText(currentSelectedItem.getName());
                 priceTextField.setText(String.valueOf(currentSelectedItem.price));
                 locationXTextField.setText(String.valueOf(currentSelectedItem.getX()));
                 locationYTextField.setText(String.valueOf(currentSelectedItem.getY()));
@@ -107,12 +107,11 @@ public class DashboardSingleton {
         // Add the section dedicated to controls
         updateConfigPanel();
         saveConfigBtn.setOnMouseClicked(event -> {
-
             if (addAsChildCheckBox.isSelected() && currentSelectedItem.isContainer) {
                 saveAsNewItem();
                 addAsChildCheckBox.setSelected(false);
             } else {
-                currentSelectedItem.name = nameTextField.getText();
+                currentSelectedItem.setName(nameTextField.getText());
                 currentSelectedItem.price = Double.valueOf(priceTextField.getText());
                 currentSelectedItem.setNewCoordinates(
                         Double.valueOf(locationXTextField.getText()),
@@ -138,7 +137,7 @@ public class DashboardSingleton {
 
     // Initializes the Items tree, along with adding some test items/containers
     private void updateItems() {
-        treeRoot = new TreeItem(itemsRoot); // I added this line, kind of ineffieient to reparse the whole tree but idrc, it got rid of the duplication bug
+        treeRoot = new TreeItem(itemsRoot);
         for (FarmItem item : itemsRoot.getContainedItems()) {
             populateTree(treeRoot, item);
         }
@@ -149,8 +148,8 @@ public class DashboardSingleton {
     private  void saveAsNewItem() {
         FarmItem newItem = new FarmItem(
                 isContainer.isSelected(),
-                Double.valueOf(locationXTextField.getText()) - (currentSelectedItem.getX() / 2), // Subtract parent coordinate to eliminate offset
-                Double.valueOf(locationYTextField.getText()) - (currentSelectedItem.getY() / 2), // Subtract parent coordinate to eliminate offset
+                Double.valueOf(locationXTextField.getText()),
+                Double.valueOf(locationYTextField.getText()),
                 Double.valueOf(widthTextField.getText()),
                 Double.valueOf(heightTextField.getText()),
                 Double.valueOf(priceTextField.getText()),
@@ -203,7 +202,7 @@ public class DashboardSingleton {
         Label heightLabel = new Label("Height:");
 
         // TextFields for input
-        nameTextField = new TextField(currentSelectedItem.name);
+        nameTextField = new TextField(currentSelectedItem.getName());
         priceTextField = new TextField(Double.toString(currentSelectedItem.price));
         locationXTextField = new TextField(Double.toString(currentSelectedItem.getX()));
         locationYTextField = new TextField(Double.toString(currentSelectedItem.getY()));
