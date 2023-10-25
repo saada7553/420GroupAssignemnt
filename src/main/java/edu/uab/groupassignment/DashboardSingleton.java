@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 public class DashboardSingleton {
 
@@ -48,10 +49,35 @@ public class DashboardSingleton {
         testAdds();
         updateItems();
 
+        // Create a custom cell factory to display only the name property
+        itemsTree.setCellFactory(new Callback<>() {
+            @Override
+            public TreeCell<FarmItem> call(TreeView<FarmItem> param) {
+                return new TreeCell<>() {
+                    @Override
+                    protected void updateItem(FarmItem item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setText("");
+                        } else {
+                            setText(item.name);
+                        }
+                    }
+                };
+            }
+        });
+
         itemsTree.setOnMouseClicked(event -> {
             TreeItem<FarmItem> selTreeItem = itemsTree.getSelectionModel().getSelectedItem();
-            if (currentSelectedItem != null) {
+            if (selTreeItem != null) {
                 currentSelectedItem = selTreeItem.getValue();
+                nameTextField.setText(currentSelectedItem.name);
+                priceTextField.setText(String.valueOf(currentSelectedItem.price));
+                locationXTextField.setText(String.valueOf(currentSelectedItem.x));
+                locationYTextField.setText(String.valueOf(currentSelectedItem.y));
+                widthTextField.setText(String.valueOf(currentSelectedItem.width));
+                heightTextField.setText(String.valueOf(currentSelectedItem.height));
+                lengthTextField.setText(String.valueOf(currentSelectedItem.length));
             }
         });
         // Add the main section dedicated to visualization
@@ -88,6 +114,7 @@ public class DashboardSingleton {
         itemsTree.setRoot(treeRoot);
         treeRoot.setExpanded(true);
         currentSelectedItem = itemsRoot;
+        visGroup = new Group(itemsRoot);
     }
 
     // Helper function for populating tree with all FarmItems in root
