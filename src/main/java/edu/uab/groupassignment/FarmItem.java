@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class FarmItem extends Group {
-    public int price;
+    public double price;
     public boolean isContainer;
     public String name;
     private ArrayList<FarmItem> containedItems;
@@ -16,7 +16,7 @@ public class FarmItem extends Group {
     private Text itemLabel;
 
 
-    public FarmItem(boolean isContainer, int x, int y, int width, int height, int price, String name) {
+    public FarmItem(boolean isContainer, double x, double y, double width, double height, double price, String name) {
         this.isContainer = isContainer;
         if (isContainer) { containedItems = new ArrayList<>(); }
         mainRect = new Rectangle(x, y, width, height);

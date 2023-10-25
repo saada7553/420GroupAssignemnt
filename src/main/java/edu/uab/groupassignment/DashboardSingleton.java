@@ -28,7 +28,15 @@ public class DashboardSingleton {
 
     // Hierarchy components
     private TreeView<FarmItem> itemsTree = new TreeView<>();
-    private FarmItem itemsRoot = new FarmItem(true, 0, 0, 1000, 600, 50, "Root");
+    private FarmItem itemsRoot = new FarmItem(
+            true,
+            0,
+            0,
+            1000,
+            600,
+            50,
+            "Root"
+    );
     private TreeItem<FarmItem> treeRoot = new TreeItem(itemsRoot);
 
     // Config panel components
@@ -43,7 +51,6 @@ public class DashboardSingleton {
     private final Button deleteConfigBtn = new Button("Delete");
     private final CheckBox addAsChildCheckBox = new CheckBox("Add Component as New Item");
     private final Button visitSelectedWithDroneBtn = new Button("Visited Selected With Drone");
-
 
     // Visualizer components
     private Group visGroup;
@@ -97,9 +104,15 @@ public class DashboardSingleton {
                 addAsChildCheckBox.setSelected(false);
             } else {
                 currentSelectedItem.name = nameTextField.getText();
-                currentSelectedItem.price = Integer.valueOf(priceTextField.getText());
-                currentSelectedItem.setNewCoordinates(Double.valueOf(locationXTextField.getText()), Double.valueOf(locationYTextField.getText()));
-                currentSelectedItem.setNewDimentions(Double.valueOf(widthTextField.getText()), Double.valueOf(heightTextField.getText()));
+                currentSelectedItem.price = Double.valueOf(priceTextField.getText());
+                currentSelectedItem.setNewCoordinates(
+                        Double.valueOf(locationXTextField.getText()),
+                        Double.valueOf(locationYTextField.getText())
+                );
+                currentSelectedItem.setNewDimentions(
+                        Double.valueOf(widthTextField.getText()),
+                        Double.valueOf(heightTextField.getText())
+                );
             }
             updateItems();
         });
@@ -115,7 +128,7 @@ public class DashboardSingleton {
 
     // Initializes the Items tree, along with adding some test items/containers
     private void updateItems() {
-        treeRoot = new TreeItem(itemsRoot);
+        treeRoot = new TreeItem(itemsRoot); // I added this line, kind of ineffieient to reparse the whole tree but idrc, it got rid of the duplication bug
         for (FarmItem item : itemsRoot.getContainedItems()) {
             populateTree(treeRoot, item);
         }
@@ -127,15 +140,16 @@ public class DashboardSingleton {
     private  void saveAsNewItem() {
         FarmItem newItem = new FarmItem(
                 false,
-                Integer.valueOf(locationXTextField.getText()),
-                Integer.valueOf(locationYTextField.getText()),
-                Integer.valueOf(widthTextField.getText()),
-                Integer.valueOf(heightTextField.getText()),
-                Integer.valueOf(priceTextField.getText()),
+                Double.valueOf(locationXTextField.getText()) - (currentSelectedItem.getX() / 2), // Subtract parent coordinate to eliminate offset
+                Double.valueOf(locationYTextField.getText()) - (currentSelectedItem.getY() / 2), // Subtract parent coordinate to eliminate offset
+                Double.valueOf(widthTextField.getText()),
+                Double.valueOf(heightTextField.getText()),
+                Double.valueOf(priceTextField.getText()),
                 nameTextField.getText()
-                );
+        );
 
-        currentSelectedItem.getChildren().add(newItem);
+        currentSelectedItem.addChildItem(newItem);
+        System.out.println(currentSelectedItem.getContainedItems());
     }
 
     // Helper function for populating tree with all FarmItems in root
@@ -172,7 +186,7 @@ public class DashboardSingleton {
 
         // TextFields for input
         nameTextField = new TextField(currentSelectedItem.name);
-        priceTextField = new TextField(Integer.toString(currentSelectedItem.price));
+        priceTextField = new TextField(Double.toString(currentSelectedItem.price));
         locationXTextField = new TextField(Double.toString(currentSelectedItem.getX()));
         locationYTextField = new TextField(Double.toString(currentSelectedItem.getY()));
         widthTextField = new TextField(Double.toString(currentSelectedItem.getWidth()));
