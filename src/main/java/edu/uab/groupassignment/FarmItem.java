@@ -12,7 +12,6 @@ public class FarmItem extends Group {
     public boolean isContainer;
     public String name;
     private ArrayList<FarmItem> containedItems;
-
     private Rectangle mainRect;
     private Text itemLabel;
 
