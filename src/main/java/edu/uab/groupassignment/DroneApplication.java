@@ -1,19 +1,23 @@
 package edu.uab.groupassignment;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class DroneApplication extends Application {
+    private DashboardSingleton dashboardSingleton = DashboardSingleton.getInstance();
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        VBox uiContainer = new VBox(10);
-        Scene scene = new Scene(uiContainer,100,100);
+    public void start(Stage primaryStage) {
+        dashboardSingleton.initAll();
+        Scene scene = new Scene(dashboardSingleton.mainHBox,800,800);
+
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(true);
+        primaryStage.setMaximized(false);
         primaryStage.show();
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
