@@ -17,6 +17,8 @@ public class DashboardSingleton {
     // Private Constructor
     private DashboardSingleton() {
         currentSelectedItem = itemsRoot;
+        isContainer.setDisable(!addAsChildCheckBox.isSelected());
+        isContainer.setAccessibleText("Muse be new item");
     }
 
     // Instance Variables
@@ -51,6 +53,7 @@ public class DashboardSingleton {
     private final Button deleteConfigBtn = new Button("Delete");
     private final CheckBox addAsChildCheckBox = new CheckBox("Add Component as New Item");
     private final Button visitSelectedWithDroneBtn = new Button("Visited Selected With Drone");
+    private final CheckBox isContainer = new CheckBox("Is Container");
 
     // Visualizer components
     private Group visGroup;
@@ -58,6 +61,7 @@ public class DashboardSingleton {
     public void initAll() {
         testAdds();
         updateItems();
+        expandTreeView(treeRoot);
 
         // Create a custom cell factory to display only the name property
         itemsTree.setCellFactory(new Callback<>() {
@@ -88,12 +92,17 @@ public class DashboardSingleton {
                 locationYTextField.setText(String.valueOf(currentSelectedItem.getY()));
                 widthTextField.setText(String.valueOf(currentSelectedItem.getWidth()));
                 heightTextField.setText(String.valueOf(currentSelectedItem.getHeight()));
+                isContainer.setSelected(currentSelectedItem.isContainer);
             }
         });
         // Add the main section dedicated to visualization
         visGroup = new Group(itemsRoot);
         visGroup.minHeight(700);
         visGroup.minWidth(700);
+
+        addAsChildCheckBox.setOnMouseClicked(event -> {
+            isContainer.setDisable(!addAsChildCheckBox.isSelected());
+        });
 
         // Add the section dedicated to controls
         updateConfigPanel();
@@ -115,6 +124,7 @@ public class DashboardSingleton {
                 );
             }
             updateItems();
+            expandTreeView(treeRoot);
         });
 
         leftComponents = new VBox(20, itemsTree, configPane);
@@ -133,13 +143,12 @@ public class DashboardSingleton {
             populateTree(treeRoot, item);
         }
         itemsTree.setRoot(treeRoot);
-        treeRoot.setExpanded(true);
     }
 
     // Adds the item with the specifications as a child of the currentSelectedItem, draws it on screen.
     private  void saveAsNewItem() {
         FarmItem newItem = new FarmItem(
-                false,
+                isContainer.isSelected(),
                 Double.valueOf(locationXTextField.getText()) - (currentSelectedItem.getX() / 2), // Subtract parent coordinate to eliminate offset
                 Double.valueOf(locationYTextField.getText()) - (currentSelectedItem.getY() / 2), // Subtract parent coordinate to eliminate offset
                 Double.valueOf(widthTextField.getText()),
@@ -159,6 +168,15 @@ public class DashboardSingleton {
         if (iroot.isContainer) {
             for (Object e : iroot.getContainedItems()) {
                 populateTree(addedItem, (FarmItem) e);
+            }
+        }
+    }
+
+    private void expandTreeView(TreeItem<FarmItem> item){
+        if(item != null && !item.isLeaf()){
+            item.setExpanded(true);
+            for(TreeItem<FarmItem> child:item.getChildren()){
+                expandTreeView(child);
             }
         }
     }
@@ -206,6 +224,7 @@ public class DashboardSingleton {
         configPane.add(heightLabel, 0, 6);
         configPane.add(heightTextField, 1, 6);
         configPane.add(addAsChildCheckBox, 0, 7);
+        configPane.add(isContainer, 1, 7);
         configPane.add(saveConfigBtn, 0, 8);
         configPane.add(deleteConfigBtn, 1, 8);
         configPane.add(visitSelectedWithDroneBtn, 0, 9);
