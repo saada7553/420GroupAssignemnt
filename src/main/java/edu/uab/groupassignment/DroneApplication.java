@@ -14,10 +14,9 @@ public class DroneApplication extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.setMaximized(false);
+        primaryStage.setTitle("Farm Dashboard");
         primaryStage.show();
     }
-
-
 
     public static void main(String[] args) {
         launch(args);

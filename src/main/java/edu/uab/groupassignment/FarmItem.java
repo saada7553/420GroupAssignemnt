@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class FarmItem extends Group {
     public int price;
+    public int x, y, width, height, length;
     public boolean isContainer;
     public String name;
     private ArrayList<FarmItem> containedItems;
@@ -16,14 +17,24 @@ public class FarmItem extends Group {
     private Text itemLabel;
 
 
-    public FarmItem(boolean isContainer, int x, int y, int width, int height, int price, String name){
+    public FarmItem(boolean isContainer, int x, int y, int width, int height, int length, int price, String name) {
         this.isContainer = isContainer;
         if (isContainer) {
             containedItems = new ArrayList<>();
         }
-        mainRect = new Rectangle(0, 0, width, height);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.length = length;
         this.price = price;
         this.name = name;
+        update();
+    }
+
+    public void update() {
+        this.getChildren().clear();
+        mainRect = new Rectangle(0, 0, width, height);
 
         setLayoutX(x);
         setLayoutY(y);
@@ -35,11 +46,18 @@ public class FarmItem extends Group {
         itemLabel = new Text(8, 15, name);
         this.getChildren().addAll(mainRect, itemLabel);
     }
+
     public ArrayList<FarmItem> getContainedItems() {
         return containedItems;
     }
+
     public void addChildItem(FarmItem item) {
         containedItems.add(item);
         this.getChildren().add(item);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
