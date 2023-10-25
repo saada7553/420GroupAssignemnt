@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 public class FarmItem extends Group {
     public int price;
-    public int x, y, width, height, length;
     public boolean isContainer;
     public String name;
     private ArrayList<FarmItem> containedItems;
@@ -17,16 +16,13 @@ public class FarmItem extends Group {
     private Text itemLabel;
 
 
-    public FarmItem(boolean isContainer, int x, int y, int width, int height, int length, int price, String name) {
+    public FarmItem(boolean isContainer, int x, int y, int width, int height, int price, String name) {
         this.isContainer = isContainer;
-        if (isContainer) {
-            containedItems = new ArrayList<>();
-        }
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.length = length;
+        if (isContainer) { containedItems = new ArrayList<>(); }
+        mainRect = new Rectangle(x, y, width, height);
+        itemLabel = new Text(x + 8, y + 15, name);
+        setLayoutX(x);
+        setLayoutY(y);
         this.price = price;
         this.name = name;
         update();
@@ -34,16 +30,9 @@ public class FarmItem extends Group {
 
     public void update() {
         this.getChildren().clear();
-        mainRect = new Rectangle(0, 0, width, height);
-
-        setLayoutX(x);
-        setLayoutY(y);
-
         mainRect.setStroke(Color.RED);
         mainRect.setStrokeWidth(4);
         mainRect.setFill(Color.TRANSPARENT);
-
-        itemLabel = new Text(8, 15, name);
         this.getChildren().addAll(mainRect, itemLabel);
     }
 
@@ -60,4 +49,22 @@ public class FarmItem extends Group {
     public String toString() {
         return name;
     }
+
+    // Updates UI with new coordinates of item.
+    public void setNewCoordinates(Double x, Double y) {
+        mainRect.setX(x);
+        mainRect.setY(y);
+        itemLabel.setX(x + 8);
+        itemLabel.setY(y + 15);
+    }
+
+    public void setNewDimentions(double width, double height) {
+        mainRect.setWidth(width);
+        mainRect.setHeight(height);
+    }
+
+    public Double getX() { return mainRect.getX(); }
+    public Double  getY() { return mainRect.getY(); }
+    public Double getWidth() { return mainRect.getWidth(); }
+    public Double getHeight() { return mainRect.getHeight(); }
 }

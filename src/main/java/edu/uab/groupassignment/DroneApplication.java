@@ -13,7 +13,7 @@ public class DroneApplication extends Application {
         Scene scene = new Scene(dashboardSingleton.mainHBox,800,800);
 
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(false);
+        primaryStage.setMaximized(true);
         primaryStage.setTitle("Farm Dashboard");
         primaryStage.show();
     }

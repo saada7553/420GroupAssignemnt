@@ -12,10 +12,11 @@ import javafx.util.Callback;
 public class DashboardSingleton {
 
     // Singleton Declaration
-    private static DashboardSingleton instance = new DashboardSingleton();
+    private static final DashboardSingleton instance = new DashboardSingleton();
 
     // Private Constructor
     private DashboardSingleton() {
+        currentSelectedItem = itemsRoot;
     }
 
     // Instance Variables
@@ -27,7 +28,7 @@ public class DashboardSingleton {
 
     // Hierarchy components
     private TreeView<FarmItem> itemsTree = new TreeView<>();
-    private FarmItem itemsRoot = new FarmItem(true, 0, 0, 500, 500, 50, 0, "Root");
+    private FarmItem itemsRoot = new FarmItem(true, 0, 0, 1000, 600, 50, "Root");
     private TreeItem<FarmItem> treeRoot = new TreeItem(itemsRoot);
 
     // Config panel components
@@ -38,9 +39,11 @@ public class DashboardSingleton {
     private TextField locationYTextField;
     private TextField widthTextField;
     private TextField heightTextField;
-    private TextField lengthTextField;
-    private Button saveConfigBtn = new Button("Save");
-    private Button deleteConfigBtn = new Button("Delete");
+    private final Button saveConfigBtn = new Button("Save");
+    private final Button deleteConfigBtn = new Button("Delete");
+    private final CheckBox addAsChildCheckBox = new CheckBox("Add Component as New Item");
+    private final Button visitSelectedWithDroneBtn = new Button("Visited Selected With Drone");
+
 
     // Visualizer components
     private Group visGroup;
@@ -71,13 +74,13 @@ public class DashboardSingleton {
             TreeItem<FarmItem> selTreeItem = itemsTree.getSelectionModel().getSelectedItem();
             if (selTreeItem != null) {
                 currentSelectedItem = selTreeItem.getValue();
+                addAsChildCheckBox.setDisable(!currentSelectedItem.isContainer);
                 nameTextField.setText(currentSelectedItem.name);
                 priceTextField.setText(String.valueOf(currentSelectedItem.price));
-                locationXTextField.setText(String.valueOf(currentSelectedItem.x));
-                locationYTextField.setText(String.valueOf(currentSelectedItem.y));
-                widthTextField.setText(String.valueOf(currentSelectedItem.width));
-                heightTextField.setText(String.valueOf(currentSelectedItem.height));
-                lengthTextField.setText(String.valueOf(currentSelectedItem.length));
+                locationXTextField.setText(String.valueOf(currentSelectedItem.getX()));
+                locationYTextField.setText(String.valueOf(currentSelectedItem.getY()));
+                widthTextField.setText(String.valueOf(currentSelectedItem.getWidth()));
+                heightTextField.setText(String.valueOf(currentSelectedItem.getHeight()));
             }
         });
         // Add the main section dedicated to visualization
@@ -88,16 +91,20 @@ public class DashboardSingleton {
         // Add the section dedicated to controls
         updateConfigPanel();
         saveConfigBtn.setOnMouseClicked(event -> {
-            currentSelectedItem.name = nameTextField.getText();
-            currentSelectedItem.price = Integer.valueOf(priceTextField.getText());
-            currentSelectedItem.x = Integer.valueOf(locationXTextField.getText());
-            currentSelectedItem.y = Integer.valueOf(locationYTextField.getText());
-            currentSelectedItem.width = Integer.valueOf(widthTextField.getText());
-            currentSelectedItem.height = Integer.valueOf(heightTextField.getText());
-            currentSelectedItem.length = Integer.valueOf(lengthTextField.getText());
+
+            if (addAsChildCheckBox.isSelected() && currentSelectedItem.isContainer) {
+                saveAsNewItem();
+                addAsChildCheckBox.setSelected(false);
+            } else {
+                currentSelectedItem.name = nameTextField.getText();
+                currentSelectedItem.price = Integer.valueOf(priceTextField.getText());
+                currentSelectedItem.setNewCoordinates(Double.valueOf(locationXTextField.getText()), Double.valueOf(locationYTextField.getText()));
+                currentSelectedItem.setNewDimentions(Double.valueOf(widthTextField.getText()), Double.valueOf(heightTextField.getText()));
+            }
             updateItems();
         });
-        leftComponents = new VBox(20, itemsTree, configPane, saveConfigBtn, deleteConfigBtn);
+
+        leftComponents = new VBox(20, itemsTree, configPane);
         leftComponents.setSpacing(20);
         leftComponents.setPadding(new Insets(20, 20, 20, 20));
         leftComponents.setAlignment(Pos.TOP_CENTER);
@@ -108,13 +115,27 @@ public class DashboardSingleton {
 
     // Initializes the Items tree, along with adding some test items/containers
     private void updateItems() {
+        treeRoot = new TreeItem(itemsRoot);
         for (FarmItem item : itemsRoot.getContainedItems()) {
             populateTree(treeRoot, item);
         }
         itemsTree.setRoot(treeRoot);
         treeRoot.setExpanded(true);
-        currentSelectedItem = itemsRoot;
-        visGroup = new Group(itemsRoot);
+    }
+
+    // Adds the item with the specifications as a child of the currentSelectedItem, draws it on screen.
+    private  void saveAsNewItem() {
+        FarmItem newItem = new FarmItem(
+                false,
+                Integer.valueOf(locationXTextField.getText()),
+                Integer.valueOf(locationYTextField.getText()),
+                Integer.valueOf(widthTextField.getText()),
+                Integer.valueOf(heightTextField.getText()),
+                Integer.valueOf(priceTextField.getText()),
+                nameTextField.getText()
+                );
+
+        currentSelectedItem.getChildren().add(newItem);
     }
 
     // Helper function for populating tree with all FarmItems in root
@@ -129,11 +150,11 @@ public class DashboardSingleton {
     }
 
     private void testAdds() {
-        FarmItem farm = new FarmItem(true, 50, 50, 250, 100, 50, 0, "Farm");
+        FarmItem farm = new FarmItem(true, 50, 50, 250, 100, 50, "Farm");
         itemsRoot.addChildItem(farm);
-        FarmItem cow = new FarmItem(false, 90, 20, 40, 20, 50, 50, "Cow");
+        FarmItem cow = new FarmItem(false, 90, 20, 40, 20, 50, "Cow");
         farm.addChildItem(cow);
-        FarmItem silo = new FarmItem(true, 400, 150, 90, 300, 50, 0, "Silo");
+        FarmItem silo = new FarmItem(true, 400, 150, 90, 300, 50, "Silo");
         itemsRoot.addChildItem(silo);
     }
 
@@ -148,16 +169,14 @@ public class DashboardSingleton {
         Label locationYLabel = new Label("Location-Y:");
         Label widthLabel = new Label("Width:");
         Label heightLabel = new Label("Height:");
-        Label lengthLabel = new Label("Length:");
 
         // TextFields for input
         nameTextField = new TextField(currentSelectedItem.name);
         priceTextField = new TextField(Integer.toString(currentSelectedItem.price));
-        locationXTextField = new TextField(Integer.toString(currentSelectedItem.x));
-        locationYTextField = new TextField(Integer.toString(currentSelectedItem.y));
-        widthTextField = new TextField(Integer.toString(currentSelectedItem.width));
-        heightTextField = new TextField(Integer.toString(currentSelectedItem.height));
-        lengthTextField = new TextField(Integer.toString(currentSelectedItem.length));
+        locationXTextField = new TextField(Double.toString(currentSelectedItem.getX()));
+        locationYTextField = new TextField(Double.toString(currentSelectedItem.getY()));
+        widthTextField = new TextField(Double.toString(currentSelectedItem.getWidth()));
+        heightTextField = new TextField(Double.toString(currentSelectedItem.getHeight()));
 
         // Add labels and text fields to the GridPane
         configPane.add(nameLabel, 0, 0);
@@ -168,12 +187,14 @@ public class DashboardSingleton {
         configPane.add(locationXTextField, 1, 2);
         configPane.add(locationYLabel, 0, 3);
         configPane.add(locationYTextField, 1, 3);
-        configPane.add(lengthLabel, 0, 4);
-        configPane.add(lengthTextField, 1, 4);
         configPane.add(widthLabel, 0, 5);
         configPane.add(widthTextField, 1, 5);
         configPane.add(heightLabel, 0, 6);
         configPane.add(heightTextField, 1, 6);
+        configPane.add(addAsChildCheckBox, 0, 7);
+        configPane.add(saveConfigBtn, 0, 8);
+        configPane.add(deleteConfigBtn, 1, 8);
+        configPane.add(visitSelectedWithDroneBtn, 0, 9);
     }
 
     // Getters and Setters
