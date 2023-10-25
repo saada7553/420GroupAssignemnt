@@ -11,25 +11,23 @@ public class FarmItem extends Group {
     public double price;
     public boolean isContainer;
     private String name;
-    private ArrayList<FarmItem> containedItems;
     private Rectangle mainRect;
     private Text itemLabel;
+    private FarmItem parent;
 
+    private ArrayList<FarmItem> containedItems;
 
-    public FarmItem(boolean isContainer, double x, double y, double width, double height, double price, String name) {
+    public FarmItem(boolean isContainer, double x, double y, double width, double height,
+                    double price, String name, FarmItem parent) {
         this.isContainer = isContainer;
-        if (isContainer) { containedItems = new ArrayList<>(); }
-        mainRect = new Rectangle(x, y, width, height);
-        itemLabel = new Text(x + 8, y + 15, name);
-        setLayoutX(x);
-        setLayoutY(y);
+        if (isContainer) {
+            containedItems = new ArrayList<>();
+        }
         this.price = price;
         this.name = name;
-        update();
-    }
 
-    public void update() {
-        this.getChildren().clear();
+        mainRect = new Rectangle(x, y, width, height);
+        itemLabel = new Text(x + 8, y + 15, name);
         mainRect.setStroke(Color.RED);
         mainRect.setStrokeWidth(4);
         mainRect.setFill(Color.TRANSPARENT);
@@ -43,6 +41,10 @@ public class FarmItem extends Group {
     public void addChildItem(FarmItem item) {
         containedItems.add(item);
         this.getChildren().add(item);
+    }
+
+    public void removeChildItem(FarmItem item) {
+        containedItems.remove(item);
     }
 
     @Override
@@ -63,14 +65,32 @@ public class FarmItem extends Group {
         mainRect.setHeight(height);
     }
 
-    public Double getX() { return mainRect.getX(); }
-    public Double  getY() { return mainRect.getY(); }
-    public Double getWidth() { return mainRect.getWidth(); }
-    public Double getHeight() { return mainRect.getHeight(); }
+    public Double getX() {
+        return mainRect.getX();
+    }
 
-    public String getName() {return name;}
+    public Double getY() {
+        return mainRect.getY();
+    }
+
+    public Double getWidth() {
+        return mainRect.getWidth();
+    }
+
+    public Double getHeight() {
+        return mainRect.getHeight();
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setName(String newName) {
         name = newName;
         itemLabel.setText(name);
+    }
+
+    public FarmItem getItemParent() {
+        return parent;
     }
 }

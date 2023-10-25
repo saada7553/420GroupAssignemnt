@@ -9,7 +9,7 @@ public class DroneApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        dashboardSingleton.initAll();
+        dashboardSingleton.init();
         Scene scene = new Scene(dashboardSingleton.mainHBox,800,800);
 
         primaryStage.setScene(scene);
