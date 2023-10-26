@@ -22,7 +22,6 @@ public class ControlPanelView {
     private final ItemController itemController;
 
     public ControlPanelView(ItemController itemController) {
-        isContainer.setDisable(!addAsChildCheckBox.isSelected());
         this.itemController = itemController;
         updateUI();
         updateConfigPanel();
@@ -31,6 +30,8 @@ public class ControlPanelView {
 
     public void updateUI() {
         addAsChildCheckBox.setDisable(!itemController.getCurrentSelectedItem().isContainer);
+        isContainer.setDisable(!addAsChildCheckBox.isSelected());
+        isContainer.setSelected(itemController.getCurrentSelectedItem().isContainer);
         nameTextField.setText(itemController.getCurrentSelectedItem().getName());
         priceTextField.setText(Double.toString(itemController.getCurrentSelectedItem().price));
         locationXTextField.setText(Double.toString(itemController.getCurrentSelectedItem().getX()));
@@ -70,20 +71,15 @@ public class ControlPanelView {
         });
 
         deleteConfigBtn.setOnMouseClicked(event -> {
-
             FarmItem toDelete = itemController.getCurrentSelectedItem();
             FarmItem parentItem = toDelete.getItemParent();
             parentItem.removeChildItem(toDelete);
             itemController.updateItems();
             itemController.expandTreeView(itemController.treeRoot);
             warningLabel.setText("Deleted");
-
         });
 
-        addAsChildCheckBox.setOnMouseClicked(event -> {
-            isContainer.setDisable(!addAsChildCheckBox.isSelected());
-        });
-
+        addAsChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addAsChildCheckBox.isSelected()));
     }
 
     private void updateConfigPanel() {

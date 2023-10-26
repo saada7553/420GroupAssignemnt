@@ -44,11 +44,11 @@ public class ItemController {
     }
 
     // Helper function for populating tree with all FarmItems in root
-    private void populateTree(TreeItem troot, FarmItem iroot) {
-        TreeItem<FarmItem> addedItem = new TreeItem<>(iroot);
-        troot.getChildren().add(addedItem);
-        if (iroot.isContainer) {
-            for (FarmItem e : iroot.getContainedItems()) {
+    private void populateTree(TreeItem<FarmItem> tRoot, FarmItem iRoot) {
+        TreeItem<FarmItem> addedItem = new TreeItem<>(iRoot);
+        tRoot.getChildren().add(addedItem);
+        if (iRoot.isContainer) {
+            for (FarmItem e : iRoot.getContainedItems()) {
                 populateTree(addedItem, e);
             }
         }
@@ -155,9 +155,5 @@ public class ItemController {
     // Getters and Setters
     public FarmItem getCurrentSelectedItem() {
         return this.currentSelectedItem;
-    }
-
-    public void setCurrentSelectedItem(FarmItem currItem) {
-        this.currentSelectedItem = currItem;
     }
 }
