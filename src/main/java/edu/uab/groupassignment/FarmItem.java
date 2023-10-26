@@ -93,4 +93,8 @@ public class FarmItem extends Group {
     public FarmItem getItemParent() {
         return parent;
     }
+
+    public  void  setParent(FarmItem parent) {
+        this.parent = parent;
+    }
 }

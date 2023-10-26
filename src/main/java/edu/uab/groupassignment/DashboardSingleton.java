@@ -133,15 +133,14 @@ public class DashboardSingleton {
 
         // Delete functionality
         deleteConfigBtn.setOnMouseClicked(event -> {
-            if (currentSelectedItem != itemsRoot) {
-//                FarmItem toDelete = currentSelectedItem;
-//                currentSelectedItem = currentSelectedItem.getItemParent();
-//                currentSelectedItem.removeChildItem(toDelete);
-//                updateItems();
-                warningLabel.setText("");
-            } else {
-                warningLabel.setText("Cannot delete Root");
-            }
+
+                FarmItem toDelete = currentSelectedItem;
+                FarmItem parentItem = toDelete.getItemParent();
+                parentItem.removeChildItem(toDelete);
+                updateItems();
+                expandTreeView(treeRoot);
+                warningLabel.setText("Deleted");
+
         });
 
         leftComponents = new VBox(20, itemsTree, warningLabel, configPane);
@@ -175,6 +174,7 @@ public class DashboardSingleton {
                 currentSelectedItem
         );
 
+        newItem.setParent(currentSelectedItem);
         currentSelectedItem.addChildItem(newItem);
         System.out.println(currentSelectedItem.getContainedItems());
     }
@@ -201,11 +201,14 @@ public class DashboardSingleton {
 
     private void testAdds() {
         FarmItem farm = new FarmItem(true, 50, 50, 250, 100, 50, "Farm", itemsRoot);
+        farm.setParent(itemsRoot);
         itemsRoot.addChildItem(farm);
         FarmItem cow = new FarmItem(false, 90, 20, 40, 20, 50, "Cow", farm);
         farm.addChildItem(cow);
+        cow.setParent(farm);
         FarmItem silo = new FarmItem(true, 400, 150, 90, 300, 50, "Silo", itemsRoot);
         itemsRoot.addChildItem(silo);
+        silo.setParent(itemsRoot);
     }
 
     private void updateConfigPanel() {
