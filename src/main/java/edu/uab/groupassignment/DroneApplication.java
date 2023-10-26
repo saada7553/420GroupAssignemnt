@@ -5,12 +5,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class DroneApplication extends Application {
-    private DashboardSingleton dashboardSingleton = DashboardSingleton.getInstance();
+    private final DashboardSingleton dashboardSingleton = DashboardSingleton.getInstance();
 
     @Override
     public void start(Stage primaryStage) {
         dashboardSingleton.init();
-        Scene scene = new Scene(dashboardSingleton.mainHBox,800,800);
+        Scene scene = new Scene(dashboardSingleton.getMainHBox(),800,800);
 
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
