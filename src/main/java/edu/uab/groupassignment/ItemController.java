@@ -18,7 +18,6 @@ public class ItemController {
         this.selectedItem = itemsRoot;
         treeRoot = new TreeItem<>(itemsRoot);
         DefaultItems.setUpItems();
-        populateTree(treeRoot, itemsRoot);
         setupTree();
         updateItems();
     }
@@ -57,6 +56,7 @@ public class ItemController {
     private void setupTree() {
         // Set selected item by clicking in TreeView
         itemsTree.setOnMouseClicked(event -> {
+            // Select item
             TreeItem<FarmItem> selTreeItem = itemsTree.getSelectionModel().getSelectedItem();
             if (selTreeItem != null) {
                 selectedItem = selTreeItem.getValue();
@@ -66,6 +66,7 @@ public class ItemController {
                         .panelView.warningLabel
                         .setText("Selected " + selectedItem.getName());
             }
+            // Duplicate Item on RClick
             if (event.getButton().equals(javafx.scene.input.MouseButton.SECONDARY)) {
                 DashboardSingleton.getInstance().panelView.warningLabel.setText("Duplicated " + selectedItem.getName());
                 saveAsNewItem(selectedItem.isContainer,
@@ -80,7 +81,7 @@ public class ItemController {
             }
         });
 
-        // Custom cell factory to display only the name in the TreeView
+        // Make TreeItems display only the name in the TreeView
         itemsTree.setCellFactory(new Callback<>() {
             @Override
             public TreeCell<FarmItem> call(TreeView<FarmItem> param) {

@@ -8,7 +8,7 @@ import static java.lang.Math.abs;
 
 public class ControlPanelView {
 
-    public final GridPane configPane = new GridPane();
+    public final GridPane configGrid = new GridPane();
     public final Label warningLabel = new Label();
     private final TextField nameTextField = new TextField();
     private final TextField priceTextField = new TextField();
@@ -43,6 +43,10 @@ public class ControlPanelView {
     }
 
     private void setupButtons() {
+
+        visitSelectedWithDroneBtn.setOnMouseClicked(event -> {
+            DashboardSingleton.getInstance().getDroneAnimController().sequence.play();
+        });
 
         saveConfigBtn.setOnMouseClicked(event -> {
             if (itemController.getSelectedItem() == itemController.itemsRoot & !addAsChildCheckBox.isSelected()) {
@@ -121,8 +125,8 @@ public class ControlPanelView {
     }
 
     private void updateConfigPanel() {
-        configPane.setHgap(10);
-        configPane.setVgap(10);
+        configGrid.setHgap(10);
+        configGrid.setVgap(10);
 
         Label nameLabel = new Label("Name:");
         Label priceLabel = new Label("Price:");
@@ -132,22 +136,22 @@ public class ControlPanelView {
         Label heightLabel = new Label("Height:");
 
         warningLabel.setTextFill(Color.RED);
-        configPane.add(nameLabel, 0, 0);
-        configPane.add(nameTextField, 1, 0);
-        configPane.add(priceLabel, 0, 1);
-        configPane.add(priceTextField, 1, 1);
-        configPane.add(locationXLabel, 0, 2);
-        configPane.add(locationXTextField, 1, 2);
-        configPane.add(locationYLabel, 0, 3);
-        configPane.add(locationYTextField, 1, 3);
-        configPane.add(widthLabel, 0, 4);
-        configPane.add(widthTextField, 1, 4);
-        configPane.add(heightLabel, 0, 5);
-        configPane.add(heightTextField, 1, 5);
-        configPane.add(addAsChildCheckBox, 0, 6);
-        configPane.add(isContainer, 1, 6);
-        configPane.add(saveConfigBtn, 0, 7);
-        configPane.add(deleteConfigBtn, 1, 7);
-        configPane.add(visitSelectedWithDroneBtn, 0, 8);
+        configGrid.add(nameLabel, 0, 0);
+        configGrid.add(nameTextField, 1, 0);
+        configGrid.add(priceLabel, 0, 1);
+        configGrid.add(priceTextField, 1, 1);
+        configGrid.add(locationXLabel, 0, 2);
+        configGrid.add(locationXTextField, 1, 2);
+        configGrid.add(locationYLabel, 0, 3);
+        configGrid.add(locationYTextField, 1, 3);
+        configGrid.add(widthLabel, 0, 4);
+        configGrid.add(widthTextField, 1, 4);
+        configGrid.add(heightLabel, 0, 5);
+        configGrid.add(heightTextField, 1, 5);
+        configGrid.add(addAsChildCheckBox, 0, 6);
+        configGrid.add(isContainer, 1, 6);
+        configGrid.add(saveConfigBtn, 0, 7);
+        configGrid.add(deleteConfigBtn, 1, 7);
+        configGrid.add(visitSelectedWithDroneBtn, 0, 8);
     }
 }
