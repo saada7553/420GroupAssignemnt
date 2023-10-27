@@ -11,24 +11,32 @@ public class FarmItem extends Group {
     public double price;
     public boolean isContainer;
     private String name;
-    private Rectangle mainRect;
-    private Text itemLabel;
-    private FarmItem parent;
+    private final Rectangle mainRect;
+    private final Text itemLabel;
+    private FarmItem parentItem;
 
     private ArrayList<FarmItem> containedItems;
 
-    public FarmItem(boolean isContainer, double x, double y, double width, double height,
-                    double price, String name, FarmItem parent) {
+    public FarmItem(boolean isContainer,
+                    double x,
+                    double y,
+                    double width,
+                    double height,
+                    double price,
+                    String name,
+                    FarmItem parent
+    ) {
         this.isContainer = isContainer;
         if (isContainer) {
             containedItems = new ArrayList<>();
         }
         this.price = price;
         this.name = name;
+        this.parentItem = parent;
 
         mainRect = new Rectangle(x, y, width, height);
         itemLabel = new Text(x + 8, y + 15, name);
-        mainRect.setStroke(Color.RED);
+        mainRect.setStroke(Color.GREEN);
         mainRect.setStrokeWidth(4);
         mainRect.setFill(Color.TRANSPARENT);
         this.getChildren().addAll(mainRect, itemLabel);
@@ -90,11 +98,8 @@ public class FarmItem extends Group {
         itemLabel.setText(name);
     }
 
-    public FarmItem getItemParent() {
-        return parent;
-    }
-
-    public  void  setParent(FarmItem parent) {
-        this.parent = parent;
+    public FarmItem getParentItem() { return parentItem; }
+    public  void setParentItem(FarmItem parentItem) {
+        this.parentItem = parentItem;
     }
 }

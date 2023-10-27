@@ -10,23 +10,14 @@ public class ItemController {
     public final TreeView<FarmItem> itemsTree;
     public final FarmItem itemsRoot;
     public TreeItem<FarmItem> treeRoot;
-    private FarmItem currentSelectedItem;
+    private FarmItem selectedItem;
 
     public ItemController() {
-        this.itemsRoot = new FarmItem(
-                true,
-                0,
-                0,
-                1000,
-                600,
-                50,
-                "Root",
-                null
-        );
+        this.itemsRoot = DefaultItems.itemsRoot;
         this.itemsTree = new TreeView<>();
-        this.currentSelectedItem = itemsRoot;
+        this.selectedItem = itemsRoot;
         treeRoot = new TreeItem<>(itemsRoot);
-        testAdds();
+        DefaultItems.setUpItems();
         populateTree(treeRoot, itemsRoot);
         setupTree();
         updateItems();
@@ -68,8 +59,12 @@ public class ItemController {
         itemsTree.setOnMouseClicked(event -> {
             TreeItem<FarmItem> selTreeItem = itemsTree.getSelectionModel().getSelectedItem();
             if (selTreeItem != null) {
-                currentSelectedItem = selTreeItem.getValue();
+                selectedItem = selTreeItem.getValue();
                 DashboardSingleton.getInstance().panelView.updateUI();
+                DashboardSingleton
+                        .getInstance()
+                        .panelView.warningLabel
+                        .setText("Selected " + selectedItem.getName());
             }
         });
 
@@ -93,7 +88,7 @@ public class ItemController {
     }
 
     // Adds the item with the specifications as a child of the currentSelectedItem, draws it on screen.
-    public void saveAsNewItem(
+    public boolean saveAsNewItem(
             boolean isSelected,
             double locationX,
             double locationY,
@@ -102,6 +97,11 @@ public class ItemController {
             double price,
             String name
     ) {
+
+        if (!checkConstraints(locationX, locationY, width, height)) {
+            return false;
+        }
+
         FarmItem newItem = new FarmItem(
                 isSelected,
                 locationX,
@@ -110,50 +110,50 @@ public class ItemController {
                 height,
                 price,
                 name,
-                currentSelectedItem
+                selectedItem
         );
-
-        newItem.setParent(currentSelectedItem);
-        currentSelectedItem.addChildItem(newItem);
+        selectedItem.addChildItem(newItem);
+        selectedItem = newItem;
+        return true;
     }
 
-    private void testAdds() {
-        FarmItem farm = new FarmItem(
-                true,
-                50, 50,
-                250,
-                100,
-                50,
-                "Farm", itemsRoot
-        );
-        FarmItem cow = new FarmItem(
-                false,
-                90,
-                20,
-                40, 20,
-                50, "Cow",
-                farm
-        );
-        FarmItem silo = new FarmItem(
-                true,
-                400,
-                150,
-                90,
-                300,
-                50,
-                "Silo", itemsRoot
-        );
+    // Checks if new item would go out of bounds of the parent it is being placed in.
+    private boolean checkConstraints(double locationX, double locationY, double width, double height) {
+        double xStart = selectedItem.getX();
+        double yStart = selectedItem.getY();
+        double xLimit = xStart + selectedItem.getWidth();
+        double yLimit = yStart + selectedItem.getHeight();
+        return locationX + width <= xLimit && locationY + height <= yLimit && locationX >= xStart && locationY >= yStart;
+    }
 
-        farm.setParent(itemsRoot);
-        itemsRoot.addChildItem(farm);
-        farm.addChildItem(cow);
-        cow.setParent(farm);
-        itemsRoot.addChildItem(silo);
-        silo.setParent(itemsRoot);
+    // Checks if updating item would go out of bounds of parent.
+    public boolean checkConstraintsWithParent(double locationX, double locationY, double width, double height) {
+        double xStart = selectedItem.getParentItem().getX();
+        double yStart = selectedItem.getParentItem().getY();
+        double xLimit = xStart + selectedItem.getParentItem().getWidth();
+        double yLimit = yStart + selectedItem.getParentItem().getHeight();
+        return locationX + width <= xLimit && locationY + height <= yLimit && locationX >= xStart && locationY >= yStart;
+    }
+
+    // Updates location of current item as well as any children it contains.
+    public void recursiveLocationUpdate(double xShift, double yShift, FarmItem item) {
+        item.setNewCoordinates(item.getX() + xShift, item.getY() + yShift);
+
+        if (!item.isContainer) {
+            return;
+        }
+
+        for (FarmItem childItem : item.getContainedItems()) {
+            recursiveLocationUpdate(xShift, yShift, childItem);
+        }
     }
 
     // Getters and Setters
-    public FarmItem getCurrentSelectedItem() {
-        return this.currentSelectedItem;
+    public FarmItem getSelectedItem() {
+        return this.selectedItem;
+    }
+
+    public  void setSelectedItem(FarmItem newItem) {
+        this.selectedItem = newItem;
     }
 }
