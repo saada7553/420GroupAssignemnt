@@ -82,7 +82,8 @@ public class ControlPanelView {
                 Double.parseDouble(widthTextField.getText()),
                 Double.parseDouble(heightTextField.getText()),
                 Double.parseDouble(priceTextField.getText()),
-                nameTextField.getText()
+                nameTextField.getText(),
+                itemController.getSelectedItem()
         );
         addAsChildCheckBox.setSelected(!saveResult);
         warningLabel

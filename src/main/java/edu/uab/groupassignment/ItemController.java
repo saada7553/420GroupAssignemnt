@@ -66,6 +66,19 @@ public class ItemController {
                         .panelView.warningLabel
                         .setText("Selected " + selectedItem.getName());
             }
+            if (event.getButton().equals(javafx.scene.input.MouseButton.SECONDARY)) {
+                DashboardSingleton.getInstance().panelView.warningLabel.setText("Duplicated " + selectedItem.getName());
+                saveAsNewItem(selectedItem.isContainer,
+                        selectedItem.getX(),
+                        selectedItem.getY(),
+                        selectedItem.getWidth(),
+                        selectedItem.getHeight(),
+                        selectedItem.price,
+                        selectedItem.getName() + "Clone",
+                        selectedItem.getParentItem());
+                updateItems();
+                expandTreeView(treeRoot);
+            }
         });
 
         // Custom cell factory to display only the name in the TreeView
@@ -89,13 +102,14 @@ public class ItemController {
 
     // Adds the item with the specifications as a child of the currentSelectedItem, draws it on screen.
     public boolean saveAsNewItem(
-            boolean isSelected,
+            boolean isContainer,
             double locationX,
             double locationY,
             double width,
             double height,
             double price,
-            String name
+            String name,
+            FarmItem parent
     ) {
 
         if (!checkConstraints(locationX, locationY, width, height)) {
@@ -103,16 +117,16 @@ public class ItemController {
         }
 
         FarmItem newItem = new FarmItem(
-                isSelected,
+                isContainer,
                 locationX,
                 locationY,
                 width,
                 height,
                 price,
                 name,
-                selectedItem
+                parent
         );
-        selectedItem.addChildItem(newItem);
+        parent.addChildItem(newItem);
         selectedItem = newItem;
         return true;
     }
@@ -153,7 +167,7 @@ public class ItemController {
         return this.selectedItem;
     }
 
-    public  void setSelectedItem(FarmItem newItem) {
+    public void setSelectedItem(FarmItem newItem) {
         this.selectedItem = newItem;
     }
 }
