@@ -11,8 +11,11 @@ public class DashboardSingleton {
 
     // Singleton Declaration
     private static final DashboardSingleton instance = new DashboardSingleton();
+
+    // Singleton members
     public ItemController itemController;
     public ControlPanelView panelView;
+    private HBox mainHBox;
 
     // Private Constructor
     private DashboardSingleton() {
@@ -20,11 +23,8 @@ public class DashboardSingleton {
         panelView = new ControlPanelView(itemController);
     }
 
-    // Main component
-    private HBox mainHBox;
-
+    // Add the main section dedicated to visualization and mainHBox
     public void init() {
-        // Add the main section dedicated to visualization
         Group visGroup = new Group(itemController.itemsRoot);
         VBox leftComponents = new VBox(
                 20,
@@ -37,8 +37,6 @@ public class DashboardSingleton {
         leftComponents.setSpacing(20);
         leftComponents.setPadding(new Insets(20, 20, 20, 20));
         leftComponents.setAlignment(Pos.TOP_CENTER);
-
-        // Add the main containing box
         mainHBox = new HBox(20, leftComponents, visGroup);
     }
 
