@@ -44,11 +44,8 @@ public class DefaultItems {
     );
 
     public static void setUpItems() {
-        farm.setParent(itemsRoot);
         itemsRoot.addChildItem(farm);
         farm.addChildItem(cow);
-        cow.setParent(farm);
         itemsRoot.addChildItem(silo);
-        silo.setParent(itemsRoot);
     }
 }

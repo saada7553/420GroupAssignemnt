@@ -3,6 +3,7 @@ package edu.uab.groupassignment;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+
 import static java.lang.Math.abs;
 
 public class ControlPanelView {
@@ -30,24 +31,23 @@ public class ControlPanelView {
     }
 
     public void updateUI() {
-        addAsChildCheckBox.setDisable(!itemController.getCurrentSelectedItem().isContainer);
-        isContainer.setDisable(!itemController.getCurrentSelectedItem().isContainer || !addAsChildCheckBox.isSelected());
-        isContainer.setSelected(itemController.getCurrentSelectedItem().isContainer);
-        nameTextField.setText(itemController.getCurrentSelectedItem().getName());
-        priceTextField.setText(Double.toString(itemController.getCurrentSelectedItem().price));
-        locationXTextField.setText(Double.toString(itemController.getCurrentSelectedItem().getX()));
-        locationYTextField.setText(Double.toString(itemController.getCurrentSelectedItem().getY()));
-        widthTextField.setText(Double.toString(itemController.getCurrentSelectedItem().getWidth()));
-        heightTextField.setText(Double.toString(itemController.getCurrentSelectedItem().getHeight()));
+        addAsChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
+        isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addAsChildCheckBox.isSelected());
+        isContainer.setSelected(itemController.getSelectedItem().isContainer);
+        nameTextField.setText(itemController.getSelectedItem().getName());
+        priceTextField.setText(Double.toString(itemController.getSelectedItem().price));
+        locationXTextField.setText(Double.toString(itemController.getSelectedItem().getX()));
+        locationYTextField.setText(Double.toString(itemController.getSelectedItem().getY()));
+        widthTextField.setText(Double.toString(itemController.getSelectedItem().getWidth()));
+        heightTextField.setText(Double.toString(itemController.getSelectedItem().getHeight()));
     }
 
     private void setupButtons() {
 
         saveConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getCurrentSelectedItem() == itemController.itemsRoot & !addAsChildCheckBox.isSelected()) {
+            if (itemController.getSelectedItem() == itemController.itemsRoot & !addAsChildCheckBox.isSelected()) {
                 warningLabel.setText("You can not edit the root.");
-            }
-            else if (addAsChildCheckBox.isSelected() && itemController.getCurrentSelectedItem().isContainer) {
+            } else if (addAsChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
                 saveNewItem();
             } else {
                 updateExistingItem();
@@ -57,14 +57,13 @@ public class ControlPanelView {
         });
 
         deleteConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getCurrentSelectedItem() == itemController.itemsRoot) {
+            if (itemController.getSelectedItem() == itemController.itemsRoot) {
                 warningLabel.setText("Can not delete root");
-            }
-            else {
-                FarmItem toDelete = itemController.getCurrentSelectedItem();
-                FarmItem parentItem = toDelete.getItemParent();
+            } else {
+                FarmItem toDelete = itemController.getSelectedItem();
+                FarmItem parentItem = toDelete.getParentItem();
                 parentItem.removeChildItem(toDelete);
-                itemController.setCurrentSelectedItem(itemController.itemsRoot);
+                itemController.setSelectedItem(itemController.itemsRoot);
                 itemController.updateItems();
                 itemController.expandTreeView(itemController.treeRoot);
                 updateUI();
@@ -92,7 +91,7 @@ public class ControlPanelView {
                 );
     }
 
-    private void  updateExistingItem() {
+    private void updateExistingItem() {
         boolean fitsWithoutCollision = itemController.checkConstraintsWithParent(
                 abs(Double.parseDouble(locationXTextField.getText())),
                 abs(Double.parseDouble(locationYTextField.getText())),
@@ -101,16 +100,16 @@ public class ControlPanelView {
         );
 
         if (fitsWithoutCollision) {
-            itemController.getCurrentSelectedItem().setName(nameTextField.getText());
-            itemController.getCurrentSelectedItem().price = Double.parseDouble(priceTextField.getText());
-            double currentX = itemController.getCurrentSelectedItem().getX();
-            double currentY = itemController.getCurrentSelectedItem().getY();
+            itemController.getSelectedItem().setName(nameTextField.getText());
+            itemController.getSelectedItem().price = Double.parseDouble(priceTextField.getText());
+            double currentX = itemController.getSelectedItem().getX();
+            double currentY = itemController.getSelectedItem().getY();
             double newX = abs(Double.parseDouble(locationXTextField.getText()));
             double newY = abs(Double.parseDouble(locationYTextField.getText()));
             double offsetX = newX - currentX;
             double offsetY = newY - currentY;
-            itemController.recursiveLocationUpdate(offsetX, offsetY, itemController.getCurrentSelectedItem());
-            itemController.getCurrentSelectedItem().setNewDimentions(
+            itemController.recursiveLocationUpdate(offsetX, offsetY, itemController.getSelectedItem());
+            itemController.getSelectedItem().setNewDimentions(
                     abs(Double.parseDouble(widthTextField.getText())),
                     abs(Double.parseDouble(heightTextField.getText()))
             );

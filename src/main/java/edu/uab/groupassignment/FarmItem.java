@@ -13,7 +13,7 @@ public class FarmItem extends Group {
     private String name;
     private final Rectangle mainRect;
     private final Text itemLabel;
-    private FarmItem parent;
+    private FarmItem parentItem;
 
     private ArrayList<FarmItem> containedItems;
 
@@ -32,7 +32,7 @@ public class FarmItem extends Group {
         }
         this.price = price;
         this.name = name;
-        this.parent = parent;
+        this.parentItem = parent;
 
         mainRect = new Rectangle(x, y, width, height);
         itemLabel = new Text(x + 8, y + 15, name);
@@ -98,8 +98,8 @@ public class FarmItem extends Group {
         itemLabel.setText(name);
     }
 
-    public FarmItem getItemParent() { return parent; }
-    public  void  setParent(FarmItem parent) {
-        this.parent = parent;
+    public FarmItem getParentItem() { return parentItem; }
+    public  void setParentItem(FarmItem parentItem) {
+        this.parentItem = parentItem;
     }
 }
