@@ -19,25 +19,25 @@ public class DashboardSingleton {
 
     // Private Constructor
     private DashboardSingleton() {
-        itemController = new ItemController();
-        panelView = new ControlPanelView(itemController);
     }
 
     // Add the main section dedicated to visualization and mainHBox
     public void init() {
-        Group visGroup = new Group(itemController.itemsRoot);
+        itemController = new ItemController();
+        panelView = new ControlPanelView(itemController);
+        Group visualizerGroup = new Group(itemController.itemsRoot);
         VBox leftComponents = new VBox(
                 20,
                 itemController.itemsTree,
                 panelView.warningLabel,
                 panelView.configPane
         );
-        visGroup.minHeight(700);
-        visGroup.minWidth(700);
+        visualizerGroup.minHeight(700);
+        visualizerGroup.minWidth(700);
         leftComponents.setSpacing(20);
         leftComponents.setPadding(new Insets(20, 20, 20, 20));
         leftComponents.setAlignment(Pos.TOP_CENTER);
-        mainHBox = new HBox(20, leftComponents, visGroup);
+        mainHBox = new HBox(20, leftComponents, visualizerGroup);
     }
 
     // Getters and Setters
