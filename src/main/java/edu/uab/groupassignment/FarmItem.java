@@ -53,6 +53,7 @@ public class FarmItem extends Group {
 
     public void removeChildItem(FarmItem item) {
         containedItems.remove(item);
+        this.getChildren().remove(item);
     }
 
     @Override

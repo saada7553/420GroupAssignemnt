@@ -21,7 +21,6 @@ public class ItemController {
         populateTree(treeRoot, itemsRoot);
         setupTree();
         updateItems();
-        expandTreeView(treeRoot);
     }
 
     // Helper functions
@@ -52,6 +51,7 @@ public class ItemController {
             populateTree(treeRoot, item);
         }
         itemsTree.setRoot(treeRoot);
+        expandTreeView(treeRoot);
     }
 
     private void setupTree() {
@@ -77,7 +77,6 @@ public class ItemController {
                         selectedItem.getName() + "Clone",
                         selectedItem.getParentItem());
                 updateItems();
-                expandTreeView(treeRoot);
             }
         });
 
