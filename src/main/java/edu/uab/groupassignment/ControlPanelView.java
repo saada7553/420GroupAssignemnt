@@ -3,6 +3,7 @@ package edu.uab.groupassignment;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 import static java.lang.Math.abs;
 
@@ -57,8 +58,12 @@ public class ControlPanelView {
         });
 
         deleteConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getSelectedItem() == itemController.itemsRoot) {
-                warningLabel.setText("Can not delete root");
+            FarmItem currItem = itemController.getSelectedItem();
+            if (currItem == itemController.itemsRoot || currItem == DefaultItems.droneControlCenter) {
+                warningLabel.setText(currItem == itemController.itemsRoot ?
+                        "Can not delete root" :
+                        "Can not delete drone station"
+                );
             } else {
                 FarmItem toDelete = itemController.getSelectedItem();
                 FarmItem parentItem = toDelete.getParentItem();
@@ -70,6 +75,12 @@ public class ControlPanelView {
                 warningLabel.setText("Deleted");
             }
         });
+
+        visitSelectedWithDroneBtn.setOnMouseClicked(event -> DefaultItems.drone.moveToItem(
+                200,
+                200,
+                Duration.seconds(3)
+        ));
 
         addAsChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addAsChildCheckBox.isSelected()));
     }
