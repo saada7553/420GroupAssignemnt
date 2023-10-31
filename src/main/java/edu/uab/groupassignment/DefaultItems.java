@@ -38,7 +38,6 @@ public class DefaultItems {
             "Silo"
     );
 
-
     public static final FarmItem commandCentre = new FarmItem(
             true,
             50,
@@ -49,10 +48,21 @@ public class DefaultItems {
             "Drone Command Centre"
     );
 
+    public static final FarmItem drone = new FarmItem(
+            true,
+            90,
+            90,
+            63,
+            63,
+            50,
+            "Drone"
+    );
+
     public static void setUpItems() {
         itemsRoot.addChildItem(farm);
         itemsRoot.addChildItem(commandCentre);
         farm.addChildItem(cow);
         itemsRoot.addChildItem(silo);
+        commandCentre.addChildItem(drone);
     }
 }
