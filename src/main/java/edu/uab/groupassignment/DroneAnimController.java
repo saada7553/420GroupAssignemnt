@@ -21,8 +21,8 @@ public class DroneAnimController {
     public void init() {
         inst = DashboardSingleton.getInstance();
         drone = new ImageView(new Image("/drone.png"));
-        drone.setTranslateX(50);
-        drone.setTranslateY(50);
+        drone.setTranslateX(inst.itemController.commandCentre.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
+        drone.setTranslateY(inst.itemController.commandCentre.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
 
         inst.getVisStackPane().getChildren().add(drone);
     }
@@ -38,11 +38,9 @@ public class DroneAnimController {
     }
 
     public void playVisitItem(Group item) {
-        int x = (int) (item.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
-        int y = (int) (item.getBoundsInLocal().getCenterY() - (drone.getBoundsInLocal().getHeight() / 2));
         TranslateTransition gotoItem = new TranslateTransition(Duration.seconds(1), drone);
-        gotoItem.setToX(x);
-        gotoItem.setToY(y);
+        gotoItem.setToX(item.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
+        gotoItem.setToY(item.getBoundsInLocal().getCenterY() - (drone.getBoundsInLocal().getHeight() / 2));
         gotoItem.play();
     }
 
@@ -64,10 +62,10 @@ public class DroneAnimController {
             step.setToY(toY);
             sequence.getChildren().add(step);
         }
-        TranslateTransition returntoStart = new TranslateTransition(Duration.seconds(1), drone);
-        returntoStart.setToX(0);
-        returntoStart.setToY(0);
-        sequence.getChildren().add(returntoStart);
+        TranslateTransition returntoCentre = new TranslateTransition(Duration.seconds(1), drone);
+        returntoCentre.setToX(inst.itemController.commandCentre.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
+        returntoCentre.setToY(inst.itemController.commandCentre.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
+        sequence.getChildren().add(returntoCentre);
         return sequence;
     }
 }

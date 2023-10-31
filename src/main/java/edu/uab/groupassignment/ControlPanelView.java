@@ -54,8 +54,12 @@ public class ControlPanelView {
         });
 
         saveConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getSelectedItem() == itemController.itemsRoot & !addChildCheckBox.isSelected()) {
-                warningLabel.setText("You can not edit the root.");
+            FarmItem currItem = itemController.getSelectedItem();
+            if (currItem == itemController.itemsRoot || currItem == DefaultItems.commandCentre) {
+                warningLabel.setText(currItem == itemController.itemsRoot ?
+                        "Can not delete root" :
+                        "Can not delete drone station"
+                );
             } else if (addChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
                 saveNewItem();
             } else {

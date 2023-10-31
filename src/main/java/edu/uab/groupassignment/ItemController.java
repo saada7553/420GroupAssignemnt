@@ -9,11 +9,13 @@ public class ItemController {
 
     public final TreeView<FarmItem> itemsTree;
     public final FarmItem itemsRoot;
+    public final FarmItem commandCentre;
     public TreeItem<FarmItem> treeRoot;
     private FarmItem selectedItem;
 
     public ItemController() {
         this.itemsRoot = DefaultItems.itemsRoot;
+        this.commandCentre = DefaultItems.commandCentre;
         this.itemsTree = new TreeView<>();
         this.selectedItem = itemsRoot;
         treeRoot = new TreeItem<>(itemsRoot);
