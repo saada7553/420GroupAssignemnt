@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class FarmItem extends Group {
-    public double price;
+    private double price;
     public boolean isContainer;
     private String name;
     private final Rectangle mainRect;
@@ -23,8 +23,7 @@ public class FarmItem extends Group {
                     double width,
                     double height,
                     double price,
-                    String name,
-                    FarmItem parent
+                    String name
     ) {
         this.isContainer = isContainer;
         if (isContainer) {
@@ -32,7 +31,6 @@ public class FarmItem extends Group {
         }
         this.price = price;
         this.name = name;
-        this.parentItem = parent;
 
         mainRect = new Rectangle(x, y, width, height);
         itemLabel = new Text(x + 8, y + 15, name);
@@ -47,6 +45,7 @@ public class FarmItem extends Group {
     }
 
     public void addChildItem(FarmItem item) {
+        item.setParentItem(this);
         containedItems.add(item);
         this.getChildren().add(item);
     }
@@ -102,5 +101,13 @@ public class FarmItem extends Group {
     public FarmItem getParentItem() { return parentItem; }
     public  void setParentItem(FarmItem parentItem) {
         this.parentItem = parentItem;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

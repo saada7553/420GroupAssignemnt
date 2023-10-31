@@ -32,6 +32,7 @@ public class DashboardSingleton {
         visualizerGroup = new Group(itemController.itemsRoot);
 
         visStackPane = new StackPane();
+        visStackPane.setAlignment(Pos.TOP_LEFT);
         visStackPane.getChildren().add(visualizerGroup);
         droneAnimController = new DroneAnimController();
 
@@ -45,7 +46,7 @@ public class DashboardSingleton {
         visualizerGroup.minWidth(700);
         leftComponents.setSpacing(20);
         leftComponents.setPadding(new Insets(20, 20, 20, 20));
-        leftComponents.setAlignment(Pos.CENTER_LEFT);
+        leftComponents.setAlignment(Pos.TOP_CENTER);
 
         mainHBox = new HBox(20, leftComponents, visStackPane);
     }

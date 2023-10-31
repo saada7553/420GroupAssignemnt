@@ -18,8 +18,9 @@ public class ControlPanelView {
     private final TextField heightTextField = new TextField();
     private final Button saveConfigBtn = new Button("Save");
     private final Button deleteConfigBtn = new Button("Delete");
-    private final CheckBox addAsChildCheckBox = new CheckBox("Save Component as New Child");
-    private final Button visitSelectedWithDroneBtn = new Button("Visit Selected with Drone");
+    private final CheckBox addChildCheckBox = new CheckBox("Save Component as New Child");
+    private final Button visitSelectedBtn = new Button("Visit Selected with Drone");
+    private final Button scanFarmBtn = new Button("Scan Farm with Drone");
     private final CheckBox isContainer = new CheckBox("Is Container");
     private final ItemController itemController;
 
@@ -31,11 +32,11 @@ public class ControlPanelView {
     }
 
     public void updateUI() {
-        addAsChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
-        isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addAsChildCheckBox.isSelected());
+        addChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
+        isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addChildCheckBox.isSelected());
         isContainer.setSelected(itemController.getSelectedItem().isContainer);
         nameTextField.setText(itemController.getSelectedItem().getName());
-        priceTextField.setText(Double.toString(itemController.getSelectedItem().price));
+        priceTextField.setText(Double.toString(itemController.getSelectedItem().getPrice()));
         locationXTextField.setText(Double.toString(itemController.getSelectedItem().getX()));
         locationYTextField.setText(Double.toString(itemController.getSelectedItem().getY()));
         widthTextField.setText(Double.toString(itemController.getSelectedItem().getWidth()));
@@ -44,14 +45,18 @@ public class ControlPanelView {
 
     private void setupButtons() {
 
-        visitSelectedWithDroneBtn.setOnMouseClicked(event -> {
-            DashboardSingleton.getInstance().getDroneAnimController().sequence.play();
+        visitSelectedBtn.setOnMouseClicked(event -> {
+            DashboardSingleton.getInstance().getDroneAnimController().playVisitItem(DashboardSingleton.getInstance().itemController.getSelectedItem());
+        });
+
+        scanFarmBtn.setOnMouseClicked(event -> {
+            DashboardSingleton.getInstance().getDroneAnimController().playScanFarm();
         });
 
         saveConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getSelectedItem() == itemController.itemsRoot & !addAsChildCheckBox.isSelected()) {
+            if (itemController.getSelectedItem() == itemController.itemsRoot & !addChildCheckBox.isSelected()) {
                 warningLabel.setText("You can not edit the root.");
-            } else if (addAsChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
+            } else if (addChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
                 saveNewItem();
             } else {
                 updateExistingItem();
@@ -75,7 +80,7 @@ public class ControlPanelView {
             }
         });
 
-        addAsChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addAsChildCheckBox.isSelected()));
+        addChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addChildCheckBox.isSelected()));
     }
 
     private void saveNewItem() {
@@ -89,7 +94,7 @@ public class ControlPanelView {
                 nameTextField.getText(),
                 itemController.getSelectedItem()
         );
-        addAsChildCheckBox.setSelected(!saveResult);
+        addChildCheckBox.setSelected(!saveResult);
         warningLabel
                 .setText(saveResult ? "Successfully saved new item" :
                         "Could not save, ensure that new item fits inside parent container."
@@ -106,7 +111,7 @@ public class ControlPanelView {
 
         if (fitsWithoutCollision) {
             itemController.getSelectedItem().setName(nameTextField.getText());
-            itemController.getSelectedItem().price = Double.parseDouble(priceTextField.getText());
+            itemController.getSelectedItem().setPrice( Double.parseDouble(priceTextField.getText()));
             double currentX = itemController.getSelectedItem().getX();
             double currentY = itemController.getSelectedItem().getY();
             double newX = abs(Double.parseDouble(locationXTextField.getText()));
@@ -148,10 +153,11 @@ public class ControlPanelView {
         configGrid.add(widthTextField, 1, 4);
         configGrid.add(heightLabel, 0, 5);
         configGrid.add(heightTextField, 1, 5);
-        configGrid.add(addAsChildCheckBox, 0, 6);
+        configGrid.add(addChildCheckBox, 0, 6);
         configGrid.add(isContainer, 1, 6);
         configGrid.add(saveConfigBtn, 0, 7);
         configGrid.add(deleteConfigBtn, 1, 7);
-        configGrid.add(visitSelectedWithDroneBtn, 0, 8);
+        configGrid.add(visitSelectedBtn, 0, 8);
+        configGrid.add(scanFarmBtn, 1, 8);
     }
 }

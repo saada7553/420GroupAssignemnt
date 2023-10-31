@@ -1,78 +1,73 @@
 package edu.uab.groupassignment;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class DroneAnimController {
 
-    // Create the Timelines
-    Timeline rotate = new Timeline();
-    Timeline moveDiagonal = new Timeline();
-    Timeline moveUp = new Timeline();
-    Timeline rotateNext = new Timeline();
-    Timeline rotateLast = new Timeline();
-    Timeline moveLeft = new Timeline();
-    public SequentialTransition sequence = new SequentialTransition();
+    private SequentialTransition scanFarmSeq = new SequentialTransition();
+    private ImageView drone;
+    private DashboardSingleton inst;
+
+    private double farmWidth, farmHeight;
 
     public DroneAnimController() {
-        anim();
+        init();
     }
 
-    public void anim() {
-        DashboardSingleton inst = DashboardSingleton.getInstance();
-        ImageView drone = new ImageView(new Image("/drone.png"));
+    public void init() {
+        inst = DashboardSingleton.getInstance();
+        drone = new ImageView(new Image("/drone.png"));
+        drone.setTranslateX(50);
+        drone.setTranslateY(50);
 
         inst.getVisStackPane().getChildren().add(drone);
+    }
 
+    public void playScanFarm() {
         // Get the Scene width and height along with image width
-        double sceneWidth = inst.getVisualizerGroup().getLayoutBounds().getWidth();
-        double sceneHeight = inst.getVisualizerGroup().getLayoutBounds().getHeight();
-        double droneWidth = drone.getLayoutBounds().getWidth();
+        farmWidth = inst.getVisualizerGroup().getBoundsInLocal().getWidth();
+        farmHeight = inst.getVisualizerGroup().getBoundsInLocal().getHeight();
 
-        // Define the Durations
-        Duration startDuration = Duration.ZERO;
-        Duration endDuration = Duration.seconds(5);
-        Duration endDuration2 = Duration.seconds(2);
+        scanFarmSeq = createFarmScanSequence();
+        scanFarmSeq.setCycleCount(1);
+        scanFarmSeq.play();
+    }
 
-        // Create Key Frames
-        KeyValue startKeyValue = new KeyValue(drone.translateXProperty(), 0);
-        KeyFrame startKeyFrameDiagonal = new KeyFrame(startDuration, startKeyValue);
-        KeyValue endKeyValueX = new KeyValue(drone.translateXProperty(), sceneWidth - droneWidth*1.5);
-        KeyValue endKeyValueY = new KeyValue(drone.translateYProperty(), sceneHeight - droneWidth*2.375);
-        KeyFrame endKeyFrameDiagonal = new KeyFrame(endDuration, endKeyValueX, endKeyValueY);
+    public void playVisitItem(Group item) {
+        int x = (int) (item.getBoundsInLocal().getCenterX() - (drone.getBoundsInLocal().getHeight() / 2));
+        int y = (int) (item.getBoundsInLocal().getCenterY() - (drone.getBoundsInLocal().getHeight() / 2));
+        TranslateTransition gotoItem = new TranslateTransition(Duration.seconds(1), drone);
+        gotoItem.setToX(x);
+        gotoItem.setToY(y);
+        gotoItem.play();
+    }
 
+    private SequentialTransition createFarmScanSequence() {
+        TranslateTransition gotoStart = new TranslateTransition(Duration.seconds(1), drone);
+        gotoStart.setToX(0);
+        gotoStart.setToY(0);
+        SequentialTransition sequence = new SequentialTransition(gotoStart);
+        double droneHeight = drone.getBoundsInLocal().getHeight();
+        int numSteps = Math.floorDiv((int) (farmHeight - droneHeight), (int) drone.getBoundsInLocal().getHeight());
 
-        KeyValue endKeyValueRotate = new KeyValue(drone.rotateProperty(), drone.getRotate() - 90);
-        KeyFrame endKeyFrameRotate = new KeyFrame(endDuration2, endKeyValueRotate);
+        double toX, toY = 0;
+        for (int i = 0; i < numSteps; i++) {
+            toX = i % 2 == 0 ? farmWidth - droneHeight : 0;
+            toY = toY + droneHeight;
 
-        KeyValue endKeyValueMoveUp = new KeyValue(drone.translateYProperty(), 0);
-        KeyFrame endKeyFrameMoveUp = new KeyFrame(endDuration, endKeyValueMoveUp);
-
-        KeyValue endKeyValueRotateNext = new KeyValue(drone.rotateProperty(),  drone.getRotate() - 180);
-        KeyFrame endKeyFrameRotateNext = new KeyFrame(endDuration2, endKeyValueRotateNext);
-
-        KeyValue endKeyValueMoveLeft = new KeyValue(drone.translateXProperty(), 0);
-        KeyFrame endKeyFrameMoveLeft = new KeyFrame(endDuration, endKeyValueMoveLeft);
-
-        KeyValue endKeyValueRotateLast = new KeyValue(drone.rotateProperty(),  drone.getRotate() - 360);
-        KeyFrame endKeyFrameRotateLast = new KeyFrame(endDuration2, endKeyValueRotateLast);
-
-        // Create Timelines
-        rotate = new Timeline(endKeyFrameRotate);
-        rotateNext = new Timeline(endKeyFrameRotateNext);
-        moveDiagonal = new Timeline(startKeyFrameDiagonal, endKeyFrameDiagonal);
-        moveUp = new Timeline(endKeyFrameMoveUp);
-        moveLeft = new Timeline(endKeyFrameMoveLeft);
-        rotateLast = new Timeline(endKeyFrameRotateLast);
-
-        // Create Sequence
-        sequence = new SequentialTransition(moveDiagonal, rotate, moveUp, rotateNext, moveLeft, rotateLast);
-        // Let the animation run forever
-        sequence.setCycleCount(Timeline.INDEFINITE);
+            TranslateTransition step = new TranslateTransition(Duration.seconds(2), drone);
+            step.setToX(toX);
+            step.setToY(toY);
+            sequence.getChildren().add(step);
+        }
+        TranslateTransition returntoStart = new TranslateTransition(Duration.seconds(1), drone);
+        returntoStart.setToX(0);
+        returntoStart.setToY(0);
+        sequence.getChildren().add(returntoStart);
+        return sequence;
     }
 }

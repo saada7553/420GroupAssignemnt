@@ -74,7 +74,7 @@ public class ItemController {
                         selectedItem.getY(),
                         selectedItem.getWidth(),
                         selectedItem.getHeight(),
-                        selectedItem.price,
+                        selectedItem.getPrice(),
                         selectedItem.getName() + "Clone",
                         selectedItem.getParentItem());
                 updateItems();
@@ -123,8 +123,7 @@ public class ItemController {
                 width,
                 height,
                 price,
-                name,
-                parent
+                name
         );
         parent.addChildItem(newItem);
         selectedItem = newItem;

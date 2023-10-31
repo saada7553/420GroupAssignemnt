@@ -6,11 +6,10 @@ public class DefaultItems {
             true,
             0,
             0,
-            1000,
+            800,
             600,
             50,
-            "Root",
-            null
+            "Root"
     );
 
     public static final FarmItem farm = new FarmItem(
@@ -19,8 +18,7 @@ public class DefaultItems {
             250,
             100,
             50,
-            "Farm",
-            itemsRoot
+            "Farm"
     );
 
     public static final FarmItem cow = new FarmItem(
@@ -28,8 +26,7 @@ public class DefaultItems {
             90,
             80,
             40, 20,
-            50, "Cow",
-            farm
+            50, "Cow"
     );
 
     public static final FarmItem silo = new FarmItem(
@@ -39,13 +36,23 @@ public class DefaultItems {
             90,
             300,
             50,
-            "Silo",
-            itemsRoot
+            "Silo"
+    );
+
+    public static final FarmItem commandCentre = new FarmItem(
+            true,
+            200,
+            400,
+            100,
+            100,
+            200,
+            "Command Centre"
     );
 
     public static void setUpItems() {
         itemsRoot.addChildItem(farm);
         farm.addChildItem(cow);
         itemsRoot.addChildItem(silo);
+        itemsRoot.addChildItem(commandCentre);
     }
 }
