@@ -8,7 +8,7 @@ import static java.lang.Math.abs;
 
 public class ControlPanelView {
 
-    public final GridPane configPane = new GridPane();
+    public final GridPane configGrid = new GridPane();
     public final Label warningLabel = new Label();
     private final TextField nameTextField = new TextField();
     private final TextField priceTextField = new TextField();
@@ -18,8 +18,9 @@ public class ControlPanelView {
     private final TextField heightTextField = new TextField();
     private final Button saveConfigBtn = new Button("Save");
     private final Button deleteConfigBtn = new Button("Delete");
-    private final CheckBox addAsChildCheckBox = new CheckBox("Save Component as New Child");
-    private final Button visitSelectedWithDroneBtn = new Button("Visit Selected with Drone");
+    private final CheckBox addChildCheckBox = new CheckBox("Save Component as New Child");
+    private final Button visitSelectedBtn = new Button("Visit Selected with Drone");
+    private final Button scanFarmBtn = new Button("Scan Farm with Drone");
     private final CheckBox isContainer = new CheckBox("Is Container");
     private final ItemController itemController;
 
@@ -31,11 +32,11 @@ public class ControlPanelView {
     }
 
     public void updateUI() {
-        addAsChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
-        isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addAsChildCheckBox.isSelected());
+        addChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
+        isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addChildCheckBox.isSelected());
         isContainer.setSelected(itemController.getSelectedItem().isContainer);
         nameTextField.setText(itemController.getSelectedItem().getName());
-        priceTextField.setText(Double.toString(itemController.getSelectedItem().price));
+        priceTextField.setText(Double.toString(itemController.getSelectedItem().getPrice()));
         locationXTextField.setText(Double.toString(itemController.getSelectedItem().getX()));
         locationYTextField.setText(Double.toString(itemController.getSelectedItem().getY()));
         widthTextField.setText(Double.toString(itemController.getSelectedItem().getWidth()));
@@ -44,10 +45,22 @@ public class ControlPanelView {
 
     private void setupButtons() {
 
+        visitSelectedBtn.setOnMouseClicked(event -> {
+            DashboardSingleton.getInstance().getDroneAnimController().playVisitItem(DashboardSingleton.getInstance().itemController.getSelectedItem());
+        });
+
+        scanFarmBtn.setOnMouseClicked(event -> {
+            DashboardSingleton.getInstance().getDroneAnimController().playScanFarm();
+        });
+
         saveConfigBtn.setOnMouseClicked(event -> {
-            if (itemController.getSelectedItem() == itemController.itemsRoot & !addAsChildCheckBox.isSelected()) {
-                warningLabel.setText("You can not edit the root.");
-            } else if (addAsChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
+            FarmItem currItem = itemController.getSelectedItem();
+            if (currItem == itemController.itemsRoot || currItem == DefaultItems.commandCentre) {
+                warningLabel.setText(currItem == itemController.itemsRoot ?
+                        "Can not delete root" :
+                        "Can not delete drone station"
+                );
+            } else if (addChildCheckBox.isSelected() && itemController.getSelectedItem().isContainer) {
                 saveNewItem();
             } else {
                 updateExistingItem();
@@ -71,7 +84,7 @@ public class ControlPanelView {
             }
         });
 
-        addAsChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addAsChildCheckBox.isSelected()));
+        addChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addChildCheckBox.isSelected()));
     }
 
     private void saveNewItem() {
@@ -85,7 +98,7 @@ public class ControlPanelView {
                 nameTextField.getText(),
                 itemController.getSelectedItem()
         );
-        addAsChildCheckBox.setSelected(!saveResult);
+        addChildCheckBox.setSelected(!saveResult);
         warningLabel
                 .setText(saveResult ? "Successfully saved new item" :
                         "Could not save, ensure that new item fits inside parent container."
@@ -102,7 +115,7 @@ public class ControlPanelView {
 
         if (fitsWithoutCollision) {
             itemController.getSelectedItem().setName(nameTextField.getText());
-            itemController.getSelectedItem().price = Double.parseDouble(priceTextField.getText());
+            itemController.getSelectedItem().setPrice( Double.parseDouble(priceTextField.getText()));
             double currentX = itemController.getSelectedItem().getX();
             double currentY = itemController.getSelectedItem().getY();
             double newX = abs(Double.parseDouble(locationXTextField.getText()));
@@ -121,8 +134,8 @@ public class ControlPanelView {
     }
 
     private void updateConfigPanel() {
-        configPane.setHgap(10);
-        configPane.setVgap(10);
+        configGrid.setHgap(10);
+        configGrid.setVgap(10);
 
         Label nameLabel = new Label("Name:");
         Label priceLabel = new Label("Price:");
@@ -132,22 +145,23 @@ public class ControlPanelView {
         Label heightLabel = new Label("Height:");
 
         warningLabel.setTextFill(Color.RED);
-        configPane.add(nameLabel, 0, 0);
-        configPane.add(nameTextField, 1, 0);
-        configPane.add(priceLabel, 0, 1);
-        configPane.add(priceTextField, 1, 1);
-        configPane.add(locationXLabel, 0, 2);
-        configPane.add(locationXTextField, 1, 2);
-        configPane.add(locationYLabel, 0, 3);
-        configPane.add(locationYTextField, 1, 3);
-        configPane.add(widthLabel, 0, 4);
-        configPane.add(widthTextField, 1, 4);
-        configPane.add(heightLabel, 0, 5);
-        configPane.add(heightTextField, 1, 5);
-        configPane.add(addAsChildCheckBox, 0, 6);
-        configPane.add(isContainer, 1, 6);
-        configPane.add(saveConfigBtn, 0, 7);
-        configPane.add(deleteConfigBtn, 1, 7);
-        configPane.add(visitSelectedWithDroneBtn, 0, 8);
+        configGrid.add(nameLabel, 0, 0);
+        configGrid.add(nameTextField, 1, 0);
+        configGrid.add(priceLabel, 0, 1);
+        configGrid.add(priceTextField, 1, 1);
+        configGrid.add(locationXLabel, 0, 2);
+        configGrid.add(locationXTextField, 1, 2);
+        configGrid.add(locationYLabel, 0, 3);
+        configGrid.add(locationYTextField, 1, 3);
+        configGrid.add(widthLabel, 0, 4);
+        configGrid.add(widthTextField, 1, 4);
+        configGrid.add(heightLabel, 0, 5);
+        configGrid.add(heightTextField, 1, 5);
+        configGrid.add(addChildCheckBox, 0, 6);
+        configGrid.add(isContainer, 1, 6);
+        configGrid.add(saveConfigBtn, 0, 7);
+        configGrid.add(deleteConfigBtn, 1, 7);
+        configGrid.add(visitSelectedBtn, 0, 8);
+        configGrid.add(scanFarmBtn, 1, 8);
     }
 }

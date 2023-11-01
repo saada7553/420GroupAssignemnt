@@ -6,30 +6,26 @@ public class DefaultItems {
             true,
             0,
             0,
-            1000,
+            800,
             600,
             50,
-            "Root",
-            null
+            "Root"
     );
 
     public static final FarmItem farm = new FarmItem(
             true,
-            50, 50,
+            50, 300,
             250,
             100,
             50,
-            "Farm",
-            itemsRoot
+            "Farm"
     );
 
     public static final FarmItem cow = new FarmItem(
             false,
-            90,
-            80,
+            90, 330,
             40, 20,
-            50, "Cow",
-            farm
+            50, "Cow"
     );
 
     public static final FarmItem silo = new FarmItem(
@@ -39,13 +35,34 @@ public class DefaultItems {
             90,
             300,
             50,
-            "Silo",
-            itemsRoot
+            "Silo"
+    );
+
+    public static final FarmItem commandCentre = new FarmItem(
+            true,
+            50,
+            50,
+            150,
+            150,
+            50,
+            "Drone Command Centre"
+    );
+
+    public static final FarmItem drone = new FarmItem(
+            true,
+            90,
+            90,
+            63,
+            63,
+            50,
+            "Drone"
     );
 
     public static void setUpItems() {
         itemsRoot.addChildItem(farm);
+        itemsRoot.addChildItem(commandCentre);
         farm.addChildItem(cow);
         itemsRoot.addChildItem(silo);
+        commandCentre.addChildItem(drone);
     }
 }
