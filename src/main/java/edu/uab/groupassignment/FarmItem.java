@@ -45,7 +45,7 @@ public class FarmItem extends Group {
     }
 
     public void addChildItem(FarmItem item) {
-        item.setParentItem(this);
+        item.parentItem = this;
         containedItems.add(item);
         this.getChildren().add(item);
     }
@@ -99,9 +99,6 @@ public class FarmItem extends Group {
     }
 
     public FarmItem getParentItem() { return parentItem; }
-    public  void setParentItem(FarmItem parentItem) {
-        this.parentItem = parentItem;
-    }
 
     public double getPrice() {
         return price;
