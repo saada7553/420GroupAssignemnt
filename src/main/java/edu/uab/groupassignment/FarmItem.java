@@ -6,9 +6,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FarmItem extends Group {
     private double price;
+    private double marketPrice;
     public boolean isContainer;
     private String name;
     private final Rectangle mainRect;
@@ -17,19 +19,24 @@ public class FarmItem extends Group {
 
     private ArrayList<FarmItem> containedItems;
 
-    public FarmItem(boolean isContainer,
+    public FarmItem(String name, boolean isContainer,
                     double x,
                     double y,
                     double width,
                     double height,
                     double price,
-                    String name
+                    double marketPrice
     ) {
         this.isContainer = isContainer;
         if (isContainer) {
             containedItems = new ArrayList<>();
         }
         this.price = price;
+        if (isContainer) {
+            this.marketPrice = 0;
+        } else {
+            this.marketPrice = marketPrice;
+        }
         this.name = name;
 
         mainRect = new Rectangle(x, y, width, height);
@@ -55,6 +62,26 @@ public class FarmItem extends Group {
         this.getChildren().remove(item);
     }
 
+    public double getCollectivePurchasePrice() {
+        double total = price;
+        if (isContainer && !Objects.isNull(containedItems)) {
+            for (FarmItem item : containedItems) {
+                total += item.getCollectivePurchasePrice();
+            }
+        }
+        return total;
+    }
+
+    public double getCollectiveMarketPrice() {
+        double total = marketPrice;
+        if (isContainer && !Objects.isNull(containedItems)) {
+            for (FarmItem item : containedItems) {
+                total += item.getCollectiveMarketPrice();
+            }
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -68,7 +95,7 @@ public class FarmItem extends Group {
         itemLabel.setY(y + 15);
     }
 
-    public void setNewDimentions(double width, double height) {
+    public void setNewDimensions(double width, double height) {
         mainRect.setWidth(width);
         mainRect.setHeight(height);
     }
@@ -98,7 +125,9 @@ public class FarmItem extends Group {
         itemLabel.setText(name);
     }
 
-    public FarmItem getParentItem() { return parentItem; }
+    public FarmItem getParentItem() {
+        return parentItem;
+    }
 
     public double getPrice() {
         return price;
@@ -106,5 +135,15 @@ public class FarmItem extends Group {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(double marketPrice) {
+        if (!this.isContainer) {
+            this.marketPrice = marketPrice;
+        }
     }
 }
