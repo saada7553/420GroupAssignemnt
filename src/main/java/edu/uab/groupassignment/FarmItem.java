@@ -62,24 +62,11 @@ public class FarmItem extends Group {
         this.getChildren().remove(item);
     }
 
-    public double getCollectivePurchasePrice() {
-        double total = price;
-        if (isContainer && !Objects.isNull(containedItems)) {
-            for (FarmItem item : containedItems) {
-                total += item.getCollectivePurchasePrice();
-            }
-        }
-        return total;
-    }
-
-    public double getCollectiveMarketPrice() {
-        double total = marketPrice;
-        if (isContainer && !Objects.isNull(containedItems)) {
-            for (FarmItem item : containedItems) {
-                total += item.getCollectiveMarketPrice();
-            }
-        }
-        return total;
+    public double[] acceptVisitor(FarmItemVisitor visitor) {
+        double[] outArr = new double[2];
+        outArr[0] = visitor.getCollectivePurchasePrice(this);
+        outArr[1] = visitor.getCollectiveMarketPrice(this);
+        return(outArr);
     }
 
     @Override

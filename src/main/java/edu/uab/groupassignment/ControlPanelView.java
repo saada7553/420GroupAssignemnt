@@ -26,6 +26,7 @@ public class ControlPanelView {
     private final Button scanFarmBtn = new Button("Scan Farm with Drone");
     private final CheckBox isContainer = new CheckBox("Is Container");
     private final ItemController itemController;
+    private final FarmItemVisitor farmVisitor = new FarmItemVisitor();
 
     public ControlPanelView(ItemController itemController) {
         this.itemController = itemController;
@@ -46,10 +47,10 @@ public class ControlPanelView {
         marketPriceTextField.setText(Double.toString(itemController.getSelectedItem().getMarketPrice()));
         marketPriceTextField.setDisable(isContainer.isSelected());
 
-        collectivePriceTextField.setText(Double.toString(itemController.getSelectedItem().getCollectivePurchasePrice()));
+        collectivePriceTextField.setText(Double.toString(itemController.getSelectedItem().acceptVisitor(farmVisitor)[0]));
         collectivePriceTextField.setEditable(false);
 
-        collectiveMarketPriceTextField.setText(Double.toString(itemController.getSelectedItem().getCollectiveMarketPrice()));
+        collectiveMarketPriceTextField.setText(Double.toString(itemController.getSelectedItem().acceptVisitor(farmVisitor)[1]));
         collectiveMarketPriceTextField.setEditable(false);
 
         locationXTextField.setText(Double.toString(itemController.getSelectedItem().getX()));
