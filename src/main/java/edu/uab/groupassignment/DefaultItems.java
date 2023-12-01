@@ -3,59 +3,63 @@ package edu.uab.groupassignment;
 public class DefaultItems {
 
     public static final FarmItem itemsRoot = new FarmItem(
-            true,
+            "Root", true,
             0,
             0,
             800,
             600,
             50,
-            "Root"
+            50
     );
 
     public static final FarmItem farm = new FarmItem(
-            true,
-            50, 300,
+            "Farm", true,
+            50,
+            300,
             250,
             100,
             50,
-            "Farm"
+            50
     );
 
     public static final FarmItem cow = new FarmItem(
-            false,
-            90, 330,
-            40, 20,
-            50, "Cow"
+            "Cow", false,
+            90,
+            330,
+            40,
+            20,
+            50,
+            50
     );
 
     public static final FarmItem silo = new FarmItem(
-            true,
+            "Silo", true,
             400,
             150,
             90,
             300,
             50,
-            "Silo"
+            50
     );
 
     public static final FarmItem commandCentre = new FarmItem(
-            true,
+            "Drone Command Centre", true,
             50,
             50,
             150,
             150,
             50,
-            "Drone Command Centre"
+            50
     );
 
     public static final FarmItem drone = new FarmItem(
-            true,
+            "Drone", true,
             90,
             90,
             63,
             63,
             50,
-            "Drone"
+            50
     );
 
     public static void setUpItems() {

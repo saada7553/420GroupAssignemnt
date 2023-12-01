@@ -77,6 +77,7 @@ public class ItemController {
                         selectedItem.getWidth(),
                         selectedItem.getHeight(),
                         selectedItem.getPrice(),
+                        selectedItem.getMarketPrice(),
                         selectedItem.getName() + "Clone",
                         selectedItem.getParentItem());
                 updateItems();
@@ -110,6 +111,7 @@ public class ItemController {
             double width,
             double height,
             double price,
+            double marketPrice,
             String name,
             FarmItem parent
     ) {
@@ -119,13 +121,13 @@ public class ItemController {
         }
 
         FarmItem newItem = new FarmItem(
-                isContainer,
+                name, isContainer,
                 locationX,
                 locationY,
                 width,
                 height,
                 price,
-                name
+                marketPrice
         );
         parent.addChildItem(newItem);
         selectedItem = newItem;

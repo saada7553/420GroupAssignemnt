@@ -12,6 +12,9 @@ public class ControlPanelView {
     public final Label warningLabel = new Label();
     private final TextField nameTextField = new TextField();
     private final TextField priceTextField = new TextField();
+    private final TextField marketPriceTextField = new TextField();
+    private final TextField collectivePriceTextField = new TextField();
+    private final TextField collectiveMarketPriceTextField = new TextField();
     private final TextField locationXTextField = new TextField();
     private final TextField locationYTextField = new TextField();
     private final TextField widthTextField = new TextField();
@@ -23,6 +26,7 @@ public class ControlPanelView {
     private final Button scanFarmBtn = new Button("Scan Farm with Drone");
     private final CheckBox isContainer = new CheckBox("Is Container");
     private final ItemController itemController;
+    private final FarmItemVisitor farmVisitor = new FarmItemVisitor();
 
     public ControlPanelView(ItemController itemController) {
         this.itemController = itemController;
@@ -35,16 +39,28 @@ public class ControlPanelView {
         addChildCheckBox.setDisable(!itemController.getSelectedItem().isContainer);
         isContainer.setDisable(!itemController.getSelectedItem().isContainer || !addChildCheckBox.isSelected());
         isContainer.setSelected(itemController.getSelectedItem().isContainer);
+
         nameTextField.setText(itemController.getSelectedItem().getName());
+
         priceTextField.setText(Double.toString(itemController.getSelectedItem().getPrice()));
+
+        marketPriceTextField.setText(Double.toString(itemController.getSelectedItem().getMarketPrice()));
+        marketPriceTextField.setDisable(isContainer.isSelected());
+
+        collectivePriceTextField.setText(Double.toString(itemController.getSelectedItem().acceptVisitor(farmVisitor)[0]));
+        collectivePriceTextField.setEditable(false);
+
+        collectiveMarketPriceTextField.setText(Double.toString(itemController.getSelectedItem().acceptVisitor(farmVisitor)[1]));
+        collectiveMarketPriceTextField.setEditable(false);
+
         locationXTextField.setText(Double.toString(itemController.getSelectedItem().getX()));
         locationYTextField.setText(Double.toString(itemController.getSelectedItem().getY()));
+
         widthTextField.setText(Double.toString(itemController.getSelectedItem().getWidth()));
         heightTextField.setText(Double.toString(itemController.getSelectedItem().getHeight()));
     }
 
     private void setupButtons() {
-
         visitSelectedBtn.setOnMouseClicked(event -> {
             DashboardSingleton.getInstance().getDroneAnimController().playVisitItem(DashboardSingleton.getInstance().itemController.getSelectedItem());
         });
@@ -85,6 +101,7 @@ public class ControlPanelView {
         });
 
         addChildCheckBox.setOnMouseClicked(event -> isContainer.setDisable(!addChildCheckBox.isSelected()));
+        isContainer.setOnMouseClicked(event -> marketPriceTextField.setDisable(isContainer.isSelected()));
     }
 
     private void saveNewItem() {
@@ -95,6 +112,7 @@ public class ControlPanelView {
                 Double.parseDouble(widthTextField.getText()),
                 Double.parseDouble(heightTextField.getText()),
                 Double.parseDouble(priceTextField.getText()),
+                Double.parseDouble(marketPriceTextField.getText()),
                 nameTextField.getText(),
                 itemController.getSelectedItem()
         );
@@ -115,7 +133,7 @@ public class ControlPanelView {
 
         if (fitsWithoutCollision) {
             itemController.getSelectedItem().setName(nameTextField.getText());
-            itemController.getSelectedItem().setPrice( Double.parseDouble(priceTextField.getText()));
+            itemController.getSelectedItem().setPrice(Double.parseDouble(priceTextField.getText()));
             double currentX = itemController.getSelectedItem().getX();
             double currentY = itemController.getSelectedItem().getY();
             double newX = abs(Double.parseDouble(locationXTextField.getText()));
@@ -123,7 +141,7 @@ public class ControlPanelView {
             double offsetX = newX - currentX;
             double offsetY = newY - currentY;
             itemController.recursiveLocationUpdate(offsetX, offsetY, itemController.getSelectedItem());
-            itemController.getSelectedItem().setNewDimentions(
+            itemController.getSelectedItem().setNewDimensions(
                     abs(Double.parseDouble(widthTextField.getText())),
                     abs(Double.parseDouble(heightTextField.getText()))
             );
@@ -138,7 +156,10 @@ public class ControlPanelView {
         configGrid.setVgap(10);
 
         Label nameLabel = new Label("Name:");
-        Label priceLabel = new Label("Price:");
+        Label priceLabel = new Label("Item Purchase Price:");
+        Label marketPriceLabel = new Label("Item Market Value:");
+        Label collectivePriceLabel = new Label("Collective Purchase Price:");
+        Label collectiveMarketPriceLabel = new Label("Collective Market Value:");
         Label locationXLabel = new Label("Location X:");
         Label locationYLabel = new Label("Location Y:");
         Label widthLabel = new Label("Width:");
@@ -149,19 +170,25 @@ public class ControlPanelView {
         configGrid.add(nameTextField, 1, 0);
         configGrid.add(priceLabel, 0, 1);
         configGrid.add(priceTextField, 1, 1);
-        configGrid.add(locationXLabel, 0, 2);
-        configGrid.add(locationXTextField, 1, 2);
-        configGrid.add(locationYLabel, 0, 3);
-        configGrid.add(locationYTextField, 1, 3);
-        configGrid.add(widthLabel, 0, 4);
-        configGrid.add(widthTextField, 1, 4);
-        configGrid.add(heightLabel, 0, 5);
-        configGrid.add(heightTextField, 1, 5);
-        configGrid.add(addChildCheckBox, 0, 6);
-        configGrid.add(isContainer, 1, 6);
-        configGrid.add(saveConfigBtn, 0, 7);
-        configGrid.add(deleteConfigBtn, 1, 7);
-        configGrid.add(visitSelectedBtn, 0, 8);
-        configGrid.add(scanFarmBtn, 1, 8);
+        configGrid.add(marketPriceLabel, 0, 2);
+        configGrid.add(marketPriceTextField, 1, 2);
+        configGrid.add(collectivePriceLabel, 0, 3);
+        configGrid.add(collectivePriceTextField, 1, 3);
+        configGrid.add(collectiveMarketPriceLabel, 0, 4);
+        configGrid.add(collectiveMarketPriceTextField, 1, 4);
+        configGrid.add(locationXLabel, 0, 5);
+        configGrid.add(locationXTextField, 1, 5);
+        configGrid.add(locationYLabel, 0, 6);
+        configGrid.add(locationYTextField, 1, 6);
+        configGrid.add(widthLabel, 0, 7);
+        configGrid.add(widthTextField, 1, 7);
+        configGrid.add(heightLabel, 0, 8);
+        configGrid.add(heightTextField, 1, 8);
+        configGrid.add(addChildCheckBox, 0, 9);
+        configGrid.add(isContainer, 1, 9);
+        configGrid.add(saveConfigBtn, 0, 10);
+        configGrid.add(deleteConfigBtn, 1, 10);
+        configGrid.add(visitSelectedBtn, 0, 11);
+        configGrid.add(scanFarmBtn, 1, 11);
     }
 }
